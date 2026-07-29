@@ -1,0 +1,20 @@
+{
+  "case_id": "car_vacuum_v1",
+  "product_type": {
+    "value": "car vacuum cleaner",
+    "status": "example_input"
+  },
+  "brand": {
+    "value": null,
+    "status": "unverified"
+  },
+  "model_name": {
+    "value": null,
+    "status": "unverified"
+  },
+  "target_market": {
+    "value": null,
+    "status": "unverified"
+  },
+  "confirmed_claims": []
+}

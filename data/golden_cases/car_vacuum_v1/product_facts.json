@@ -1,0 +1,29 @@
+{
+  "case_id": "car_vacuum_v1",
+  "facts": [
+    {
+      "field": "power_watts",
+      "value": null,
+      "status": "unverified",
+      "source_id": null
+    },
+    {
+      "field": "suction_strength",
+      "value": null,
+      "status": "unverified",
+      "source_id": null
+    },
+    {
+      "field": "battery_runtime",
+      "value": null,
+      "status": "unverified",
+      "source_id": null
+    },
+    {
+      "field": "included_accessories",
+      "value": null,
+      "status": "unverified",
+      "source_id": null
+    }
+  ]
+}

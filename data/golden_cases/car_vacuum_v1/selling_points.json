@@ -1,0 +1,18 @@
+{
+  "case_id": "car_vacuum_v1",
+  "selling_points": [
+    {
+      "id": "sp_clean_car_mess",
+      "claim": {
+        "value": null,
+        "status": "unverified"
+      },
+      "audience_pain": "Small debris and dust inside a car are inconvenient to clean with household tools.",
+      "required_evidence": [
+        "confirmed product capability",
+        "confirmed usage scenario"
+      ],
+      "source_ids": []
+    }
+  ]
+}
