@@ -24,6 +24,31 @@
       "risk_notes": [
         "Do not state suction, wattage, runtime, or noise level."
       ]
+    },
+    {
+      "creative_idea_id": "idea_driver_cleanup_moment",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "title": "Driver cleanup moment",
+      "hook": "Start with a driver noticing debris before getting back on the road.",
+      "concept_summary": "A second schema fixture concept focused on a quick car cleanup moment, using only verified category and usage context.",
+      "target_audience": "Drivers who clean small interior messes",
+      "source_usages": [
+        {
+          "source_usage_id": "usage_idea_driver_sp_cleanup",
+          "source_type": "selling_point",
+          "source_id": "sp_car_interior_cleanup_context",
+          "usage_purpose": "Support the car interior cleanup scenario."
+        },
+        {
+          "source_usage_id": "usage_idea_driver_hook_insight",
+          "source_type": "reference_insight",
+          "source_id": "insight_car_mess_hook",
+          "usage_purpose": "Support the driver-notices-mess opening."
+        }
+      ],
+      "risk_notes": [
+        "Keep the concept away from unverified performance specifications."
+      ]
     }
   ]
 }

@@ -23,3 +23,15 @@ Reason: Phase 0 is a repository and learning baseline. Adding runtime AI infrast
 Decision: Phase 1A uses fixed Pydantic domain schemas and explicit cross-reference validation instead of user-defined dynamic schemas.
 
 Reason: fixed business boundaries are easier to test, prevent arbitrary schema injection, and keep the distinction clear between format validity and factual truth.
+
+## 2026-07-30: Phase 1B Fixture-Backed Fake Provider
+
+Decision: Phase 1B uses fixture-backed Fake Provider before integrating a real LLM.
+
+Reason: this gives stable tests, separates model problems from workflow problems, makes Provider input/output contracts explicit, and avoids API cost and non-determinism.
+
+## 2026-07-30: Human Gate Before Script Generation
+
+Decision: idea selection is an explicit human review gate and script generation cannot occur before approval.
+
+Reason: humans keep final creative selection authority, the workflow does not let a model decide for the user, and the state semantics are ready for a future interrupt/resume implementation.

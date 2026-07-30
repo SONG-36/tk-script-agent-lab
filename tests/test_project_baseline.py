@@ -24,6 +24,7 @@ def test_golden_case_json_files_load() -> None:
         "creative_ideas.json",
         "script_drafts.json",
         "review_decisions.json",
+        "workflow_input.json",
     ]
 
     for filename in json_files:

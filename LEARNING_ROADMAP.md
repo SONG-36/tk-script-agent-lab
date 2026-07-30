@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 1A implementation scope. Phase 1A is complete only when tests and validation commands pass.
+Current status: Phase 1B implementation scope. Phase 1B is complete only when tests, demo commands, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -12,13 +12,23 @@ No TikTok Agent business logic is implemented in Phase 0.
 
 Build deterministic product, fact, selling point, reference video, requirement, and validation models. Keep all validation rules in code.
 
-Implemented scope:
+Completed scope:
 
 - fixed Pydantic v2 domain schemas;
 - stable IDs for business objects;
 - ID-only cross-object references;
 - deterministic cross-reference validator;
 - Golden Case loading, validation, serialization, and reload tests.
+
+## Phase 1B: Fake Provider And Deterministic Workflow
+
+Implemented scope:
+
+- fixture-backed Fake Provider as a model boundary substitute;
+- two-stage workflow: `start_workflow()` then `resume_with_review()`;
+- explicit human idea selection gate;
+- deterministic Provider output validation;
+- completed workflow export to JSON and Markdown.
 
 ## Phase 2: Real LLM
 

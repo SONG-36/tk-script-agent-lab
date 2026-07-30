@@ -41,6 +41,48 @@
           "usage_purpose": "Support the opening scene."
         }
       ]
+    },
+    {
+      "script_id": "script_schema_fixture_2",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "creative_idea_id": "idea_driver_cleanup_moment",
+      "title": "Driver cleanup moment schema script",
+      "scenes": [
+        {
+          "scene_id": "scene_1",
+          "sequence": 1,
+          "visual": "Show a driver opening the car door and noticing small debris.",
+          "action": "Frame the mess as a familiar car interior cleanup moment.",
+          "voiceover": "You notice the mess right when you are about to leave.",
+          "on_screen_text": "Quick cleanup moment",
+          "duration_seconds": 3.0
+        },
+        {
+          "scene_id": "scene_2",
+          "sequence": 2,
+          "visual": "Show a clean interior after the cleanup context is demonstrated.",
+          "action": "Avoid naming unverified suction, wattage, runtime, or noise claims.",
+          "voiceover": "Keep every product claim tied to verified facts before publishing.",
+          "on_screen_text": "Use verified claims only",
+          "duration_seconds": 4.0
+        }
+      ],
+      "caption": "A schema fixture for a driver cleanup moment.",
+      "cta": "Approve only after checking verified product facts.",
+      "source_usages": [
+        {
+          "source_usage_id": "usage_script_2_sp_cleanup",
+          "source_type": "selling_point",
+          "source_id": "sp_car_interior_cleanup_context",
+          "usage_purpose": "Support the cleanup scenario."
+        },
+        {
+          "source_usage_id": "usage_script_2_insight_hook",
+          "source_type": "reference_insight",
+          "source_id": "insight_car_mess_hook",
+          "usage_purpose": "Support the opening scene."
+        }
+      ]
     }
   ]
 }

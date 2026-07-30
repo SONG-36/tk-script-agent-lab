@@ -1,0 +1,8 @@
+{
+  "run_id": "run_car_vacuum_phase_1b_fixture",
+  "idea_count": 2,
+  "product_profile_file": "product_profile.json",
+  "product_facts_file": "product_facts.json",
+  "selling_points_file": "selling_points.json",
+  "reference_videos_file": "reference_videos.json"
+}

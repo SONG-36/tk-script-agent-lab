@@ -19,3 +19,9 @@ The verified facts in this fixture are limited to schema-safe facts such as prod
 The fixture intentionally keeps unverified facts for wattage and runtime so validation can distinguish unknown data from confirmed product claims.
 
 No suction strength, power rating, runtime, noise level, discount, certification, or compatibility claim is asserted as a real product fact.
+
+## Phase 1B Fixture Boundary
+
+The creative ideas and script drafts are deterministic workflow fixtures. They are not real marketing conclusions and do not claim product performance.
+
+`workflow_input.json` contains only initial workflow inputs and file references. Reference insights, creative ideas, script drafts, and review decisions remain Provider or human-review fixtures.

@@ -1,12 +1,20 @@
 {
   "review_decisions": [
     {
-      "review_id": "review_script_pending",
-      "target_type": "script_draft",
-      "target_id": "script_schema_fixture_1",
-      "decision": "PENDING",
-      "reviewer": null,
+      "review_id": "review_approve_before_after_cleanup",
+      "target_type": "creative_idea",
+      "target_id": "idea_before_after_cleanup",
+      "decision": "APPROVED",
+      "reviewer": "fixture-reviewer",
       "comment": null
+    },
+    {
+      "review_id": "review_reject_driver_cleanup_moment",
+      "target_type": "creative_idea",
+      "target_id": "idea_driver_cleanup_moment",
+      "decision": "REJECTED",
+      "reviewer": "fixture-reviewer",
+      "comment": "Rejected only as fixture coverage; not a product judgment."
     }
   ]
 }
