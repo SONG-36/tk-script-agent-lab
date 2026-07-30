@@ -10,3 +10,6 @@ dist/
 build/
 *.egg-info/
 artifacts/
+
+# LangGraph local runtime state
+.langgraph_api/
