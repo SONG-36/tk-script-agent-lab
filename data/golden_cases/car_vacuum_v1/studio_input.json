@@ -1,0 +1,109 @@
+{
+  "run_id": "run_car_vacuum_phase_1c_studio",
+  "product_profile": {
+    "product_id": "prod_car_vacuum_schema_fixture",
+    "product_name": "Car Vacuum Schema Fixture",
+    "category": "car vacuum cleaner",
+    "target_market": "Schema validation fixture",
+    "target_audiences": [
+      "Car owners",
+      "Drivers who clean small interior messes"
+    ],
+    "usage_scenarios": [
+      "Car interior dust cleanup",
+      "Small debris cleanup in seats or floor mats"
+    ],
+    "prohibited_claims": [
+      "Do not claim a specific suction strength without a verified source.",
+      "Do not claim a specific power rating without a verified source.",
+      "Do not claim a specific battery runtime without a verified source."
+    ],
+    "notes": "Schema-only product profile. This is not a confirmed real SKU."
+  },
+  "product_facts": [
+    {
+      "fact_id": "fact_product_category",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "category",
+      "value": "car vacuum cleaner",
+      "unit": null,
+      "status": "VERIFIED",
+      "source_ids": [
+        "product_profile_fixture"
+      ],
+      "notes": "Verified only as a schema fixture category, not as a real SKU claim."
+    },
+    {
+      "fact_id": "fact_usage_context",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "usage_context",
+      "value": "car interior cleanup",
+      "unit": null,
+      "status": "VERIFIED",
+      "source_ids": [
+        "product_profile_fixture"
+      ],
+      "notes": "Generic usage context from the fixture description."
+    },
+    {
+      "fact_id": "fact_power_watts_unknown",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "power_watts",
+      "value": null,
+      "unit": "W",
+      "status": "UNVERIFIED",
+      "source_ids": [],
+      "notes": "No confirmed wattage is available in this fixture."
+    },
+    {
+      "fact_id": "fact_battery_runtime_unknown",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "battery_runtime",
+      "value": null,
+      "unit": "minutes",
+      "status": "UNVERIFIED",
+      "source_ids": [],
+      "notes": "No confirmed runtime is available in this fixture."
+    }
+  ],
+  "selling_points": [
+    {
+      "selling_point_id": "sp_car_interior_cleanup_context",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "title": "Car interior cleanup context",
+      "description": "The fixture may discuss cleaning small messes inside a car, without making specific performance claims.",
+      "fact_ids": [
+        "fact_product_category",
+        "fact_usage_context"
+      ],
+      "target_pain_points": [
+        "Small debris and dust inside a car are inconvenient to clean with household tools."
+      ],
+      "priority": 3
+    }
+  ],
+  "reference_videos": [
+    {
+      "reference_video_id": "ref_video_schema_fixture_1",
+      "platform": "LOCAL",
+      "url": null,
+      "title": "Schema-only car interior cleanup reference",
+      "transcript": "A local fixture describes a driver noticing small debris in a car interior and cleaning it up.",
+      "creator_name": null,
+      "published_at": null,
+      "notes": "Local schema fixture only. No public video was reviewed."
+    }
+  ],
+  "reference_insights": [
+    {
+      "insight_id": "insight_car_mess_hook",
+      "reference_video_id": "ref_video_schema_fixture_1",
+      "insight_type": "HOOK",
+      "description": "Open with a visible small car-interior mess before discussing cleanup.",
+      "evidence_text": "A driver noticing small debris in a car interior.",
+      "start_second": null,
+      "end_second": null
+    }
+  ],
+  "idea_count": 2
+}

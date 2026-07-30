@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 1B implementation scope. Phase 1B is complete only when tests, demo commands, and validation commands pass.
+Current status: Phase 1C implementation scope. Phase 1C is complete only when tests, graph demo commands, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -22,13 +22,23 @@ Completed scope:
 
 ## Phase 1B: Fake Provider And Deterministic Workflow
 
-Implemented scope:
+Completed scope:
 
 - fixture-backed Fake Provider as a model boundary substitute;
 - two-stage workflow: `start_workflow()` then `resume_with_review()`;
 - explicit human idea selection gate;
 - deterministic Provider output validation;
 - completed workflow export to JSON and Markdown.
+
+## Phase 1C: LangGraph Visualization And Studio Human Gate
+
+Implemented scope:
+
+- single LangGraph entry in `langgraph.json`;
+- input, internal, and output state layering;
+- node and conditional edge orchestration;
+- LangGraph interrupt/resume for human idea selection;
+- Studio-ready input fixture.
 
 ## Phase 2: Real LLM
 

@@ -4,13 +4,15 @@
 
 ## Current Phase
 
-Current status: Phase 1B.
+Current status: Phase 1C.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
 Phase 1A added deterministic domain contracts and cross-reference validation for the TikTok Script Agent Lab.
 
 Phase 1B adds a fixture-backed Fake Provider and a deterministic two-stage workflow with a real human gate.
+
+Phase 1C adds a LangGraph visualization and orchestration layer over the already validated workflow.
 
 There is still no real Agent in this phase. There are no model calls, tools, RAG, LangGraph workflows, TikTok API integrations, scraping integrations, or production services.
 
@@ -27,7 +29,7 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 1B runs a deterministic vertical workflow only. Later phases may introduce real LLM usage, minimal RAG, LangGraph, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 1C runs the same deterministic chain through LangGraph. Later phases may introduce real LLM usage, minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
 
 ## Phase 1A Capability
 
@@ -94,6 +96,53 @@ uv run python scripts/run_phase_1b_demo.py \
   --reviewer "demo-reviewer" \
   --output-dir artifacts/phase_1b_demo
 ```
+
+## Phase 1C Capability
+
+Phase 1C can:
+
+- load `studio_input.json` as structured LangGraph input;
+- validate manual `ReferenceInsight` values before creative generation;
+- display nodes, state, conditional routing, interrupt, resume, errors, and step records in LangGraph Studio;
+- pause at `human_select_idea` through LangGraph `interrupt()`;
+- resume with a human review payload;
+- generate the fixed Fake Provider script after approval.
+
+Current LangGraph flow:
+
+```text
+Studio Input
+→ validate_input
+→ validate_manual_insights
+→ Fake Creative Ideas
+→ deterministic validation
+→ LangGraph Interrupt
+→ Human Review
+→ Fake Script
+→ deterministic validation
+→ Studio Output
+```
+
+Studio usage:
+
+```bash
+uv run langgraph dev
+```
+
+Then choose graph `agent`, copy `data/golden_cases/car_vacuum_v1/studio_input.json` into the input, submit, review the interrupt payload, and resume with an approved review payload.
+
+Graph demo:
+
+```bash
+uv run python scripts/run_phase_1c_graph_demo.py
+uv run python scripts/run_phase_1c_graph_demo.py \
+  --selected-idea-id idea_before_after_cleanup \
+  --reviewer phase-1c-reviewer
+```
+
+普通数据变化应通过 Studio input or Golden Case JSON 调整；只有 Schema、业务规则或 Graph 结构变化才需要改源码。
+
+Current boundary: ReferenceInsight is manually supplied, while CreativeIdea and ScriptDraft still come from Fake Provider fixtures. There is still no real model, RAG, Tool Calling, or product UI.
 
 ## Running Tests
 

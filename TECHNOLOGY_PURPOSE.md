@@ -34,3 +34,13 @@ The deterministic Workflow proves the business chain first: input validation, pr
 The Human Gate is an explicit business state. Script generation cannot happen until a review approves a specific creative idea.
 
 LangGraph is still not included. The current goal is to prove the chain in ordinary Python before introducing graph orchestration.
+
+## Phase 1C LangGraph Boundary
+
+LangGraph is introduced in Phase 1C for State, Node, Edge, Interrupt, Resume, and Studio visualization.
+
+LangGraph does not prove business facts, product truth, source validity, or script safety. The deterministic domain validator still owns those rules.
+
+LangGraph Studio is a development and debugging interface, not the formal product UI.
+
+ReferenceInsight is manually supplied in Phase 1C. Fake Provider still only supplies CreativeIdea and ScriptDraft fixtures.

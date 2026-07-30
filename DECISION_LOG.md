@@ -35,3 +35,15 @@ Reason: this gives stable tests, separates model problems from workflow problems
 Decision: idea selection is an explicit human review gate and script generation cannot occur before approval.
 
 Reason: humans keep final creative selection authority, the workflow does not let a model decide for the user, and the state semantics are ready for a future interrupt/resume implementation.
+
+## 2026-07-30: Phase 1C LangGraph Layer
+
+Decision: Phase 1C introduces LangGraph as a visualization and orchestration layer over the already validated Phase 1B workflow.
+
+Reason: this avoids depending on Graph before the business chain is proven, avoids duplicating orchestration mechanics, teaches State/Node/Edge/Interrupt, and keeps business rules separate from the framework.
+
+## 2026-07-30: Manual Reference Insights In Phase 1C
+
+Decision: Reference insights are manually supplied in Phase 1C.
+
+Reason: this validates Graph and the business chain first. Reference video analysis standards can be explored later through knowledge base, Skills, or real model experiments without hard-coding immature analysis rules now.

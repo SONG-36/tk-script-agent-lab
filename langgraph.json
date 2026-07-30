@@ -1,0 +1,7 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./src/tk_script_agent_lab/langgraph_app/graph.py:graph"
+  }
+}
