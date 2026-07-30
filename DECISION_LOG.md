@@ -17,3 +17,9 @@ Reason: the reference project contains useful architecture patterns, but its web
 Decision: do not add LangGraph, LangChain, OpenAI SDK, Anthropic SDK, Tavily, RAG, embedding, vector database, Streamlit, FastAPI, Docker, TikTok API, or scraping APIs.
 
 Reason: Phase 0 is a repository and learning baseline. Adding runtime AI infrastructure now would blur what is deterministic code versus model behavior.
+
+## 2026-07-29: Phase 1A Fixed Domain Schemas
+
+Decision: Phase 1A uses fixed Pydantic domain schemas and explicit cross-reference validation instead of user-defined dynamic schemas.
+
+Reason: fixed business boundaries are easier to test, prevent arbitrary schema injection, and keep the distinction clear between format validity and factual truth.

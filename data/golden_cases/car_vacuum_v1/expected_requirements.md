@@ -1,6 +1,6 @@
 # Expected Requirements
 
-This Golden Case is a minimal Phase 0 fixture for a car vacuum cleaner.
+This Golden Case is a minimal Phase 1A fixture for a car vacuum cleaner schema.
 
 Requirements for future phases:
 
@@ -11,3 +11,11 @@ Requirements for future phases:
 - Preserve uncertainty when source evidence is missing.
 
 Phase 0 does not implement these requirements. It only records the target behavior.
+
+## Phase 1A Fixture Boundary
+
+The verified facts in this fixture are limited to schema-safe facts such as product category and generic car-interior cleanup context. They do not represent a confirmed real SKU.
+
+The fixture intentionally keeps unverified facts for wattage and runtime so validation can distinguish unknown data from confirmed product claims.
+
+No suction strength, power rating, runtime, noise level, discount, certification, or compatibility claim is asserted as a real product fact.

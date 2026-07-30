@@ -1,29 +1,48 @@
 {
-  "case_id": "car_vacuum_v1",
-  "facts": [
+  "product_facts": [
     {
-      "field": "power_watts",
-      "value": null,
-      "status": "unverified",
-      "source_id": null
+      "fact_id": "fact_product_category",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "category",
+      "value": "car vacuum cleaner",
+      "unit": null,
+      "status": "VERIFIED",
+      "source_ids": [
+        "product_profile_fixture"
+      ],
+      "notes": "Verified only as a schema fixture category, not as a real SKU claim."
     },
     {
-      "field": "suction_strength",
-      "value": null,
-      "status": "unverified",
-      "source_id": null
+      "fact_id": "fact_usage_context",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "usage_context",
+      "value": "car interior cleanup",
+      "unit": null,
+      "status": "VERIFIED",
+      "source_ids": [
+        "product_profile_fixture"
+      ],
+      "notes": "Generic usage context from the fixture description."
     },
     {
-      "field": "battery_runtime",
+      "fact_id": "fact_power_watts_unknown",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "power_watts",
       "value": null,
-      "status": "unverified",
-      "source_id": null
+      "unit": "W",
+      "status": "UNVERIFIED",
+      "source_ids": [],
+      "notes": "No confirmed wattage is available in this fixture."
     },
     {
-      "field": "included_accessories",
+      "fact_id": "fact_battery_runtime_unknown",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "field_name": "battery_runtime",
       "value": null,
-      "status": "unverified",
-      "source_id": null
+      "unit": "minutes",
+      "status": "UNVERIFIED",
+      "source_ids": [],
+      "notes": "No confirmed runtime is available in this fixture."
     }
   ]
 }

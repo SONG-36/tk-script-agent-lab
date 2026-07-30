@@ -1,0 +1,46 @@
+{
+  "script_drafts": [
+    {
+      "script_id": "script_schema_fixture_1",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "creative_idea_id": "idea_before_after_cleanup",
+      "title": "Car interior cleanup schema script",
+      "scenes": [
+        {
+          "scene_id": "scene_1",
+          "sequence": 1,
+          "visual": "Show small debris inside a parked car.",
+          "action": "Point camera at the mess without making performance claims.",
+          "voiceover": "Small messes inside the car are easy to notice.",
+          "on_screen_text": "Car interior cleanup",
+          "duration_seconds": 3.0
+        },
+        {
+          "scene_id": "scene_2",
+          "sequence": 2,
+          "visual": "Show the cleanup context as a simple before and after.",
+          "action": "Keep the focus on the use case, not unverified specifications.",
+          "voiceover": "Use verified facts only when turning this into product copy.",
+          "on_screen_text": "No unverified specs",
+          "duration_seconds": 4.0
+        }
+      ],
+      "caption": "Schema fixture for a car interior cleanup script.",
+      "cta": "Review verified product facts before publishing.",
+      "source_usages": [
+        {
+          "source_usage_id": "usage_script_fact_category",
+          "source_type": "product_fact",
+          "source_id": "fact_product_category",
+          "usage_purpose": "Support the product category reference."
+        },
+        {
+          "source_usage_id": "usage_script_insight_hook",
+          "source_type": "reference_insight",
+          "source_id": "insight_car_mess_hook",
+          "usage_purpose": "Support the opening scene."
+        }
+      ]
+    }
+  ]
+}

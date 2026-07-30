@@ -4,11 +4,13 @@
 
 ## Current Phase
 
-Current status: Phase 0 only.
+Current status: Phase 1A.
 
-Phase 0 establishes the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
+Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
-There is no real Agent in this phase. There are no model calls, tools, RAG, LangGraph workflows, TikTok API integrations, scraping integrations, or production services.
+Phase 1A adds deterministic domain contracts and cross-reference validation for the TikTok Script Agent Lab.
+
+There is still no real Agent in this phase. There are no model calls, tools, RAG, LangGraph workflows, TikTok API integrations, scraping integrations, or production services.
 
 ## Learning Goal
 
@@ -23,7 +25,35 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 0 is only the project and learning baseline. Later phases may introduce deterministic domain models, real LLM usage, minimal RAG, LangGraph, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 1A implements deterministic domain models only. Later phases may introduce real LLM usage, minimal RAG, LangGraph, tool calling, and eval loops, but none of those are implemented yet.
+
+## Phase 1A Capability
+
+Phase 1A can:
+
+- load fixed Pydantic domain objects;
+- represent products, product facts, selling points, reference videos, reference insights, creative ideas, script drafts, and review decisions;
+- express cross-object references only by stable IDs;
+- reject invalid single-object states with Pydantic v2;
+- return machine-readable validation errors for broken cross-object references;
+- load, validate, serialize, and reload the car vacuum Golden Case.
+
+Current data relationship:
+
+```text
+ProductProfile
+├── ProductFact
+├── SellingPoint -> ProductFact
+├── ReferenceVideo -> ReferenceInsight
+├── CreativeIdea -> SourceUsage
+└── ScriptDraft -> CreativeIdea + SourceUsage
+```
+
+## Running Tests
+
+```bash
+uv run python -m pytest -q
+```
 
 ## Current Non-Goals
 

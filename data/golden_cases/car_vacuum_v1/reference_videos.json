@@ -1,19 +1,14 @@
 {
-  "case_id": "car_vacuum_v1",
   "reference_videos": [
     {
-      "id": "ref_video_placeholder_1",
-      "platform": "TikTok",
-      "url": {
-        "value": null,
-        "status": "unverified"
-      },
-      "observed_hook": {
-        "value": null,
-        "status": "unverified"
-      },
-      "observed_structure": [],
-      "notes": "Placeholder only. No real video has been reviewed in Phase 0."
+      "reference_video_id": "ref_video_schema_fixture_1",
+      "platform": "LOCAL",
+      "url": null,
+      "title": "Schema-only car interior cleanup reference",
+      "transcript": "A local fixture describes a driver noticing small debris in a car interior and cleaning it up.",
+      "creator_name": null,
+      "published_at": null,
+      "notes": "Local schema fixture only. No public video was reviewed."
     }
   ]
 }

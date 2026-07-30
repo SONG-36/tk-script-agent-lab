@@ -20,10 +20,14 @@ def test_golden_case_json_files_load() -> None:
         "product_facts.json",
         "selling_points.json",
         "reference_videos.json",
+        "reference_insights.json",
+        "creative_ideas.json",
+        "script_drafts.json",
+        "review_decisions.json",
     ]
 
     for filename in json_files:
         with (case_dir / filename).open(encoding="utf-8") as file:
             payload = json.load(file)
 
-        assert payload["case_id"] == "car_vacuum_v1"
+        assert payload

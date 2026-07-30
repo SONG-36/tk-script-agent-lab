@@ -1,0 +1,29 @@
+{
+  "creative_ideas": [
+    {
+      "creative_idea_id": "idea_before_after_cleanup",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "title": "Before and after car interior cleanup",
+      "hook": "Show the small mess first, then frame the cleanup as a car interior use case.",
+      "concept_summary": "A simple schema fixture concept that uses verified category and usage context without claiming performance specs.",
+      "target_audience": "Car owners",
+      "source_usages": [
+        {
+          "source_usage_id": "usage_idea_sp_cleanup",
+          "source_type": "selling_point",
+          "source_id": "sp_car_interior_cleanup_context",
+          "usage_purpose": "Support the cleanup use-case angle."
+        },
+        {
+          "source_usage_id": "usage_idea_hook_insight",
+          "source_type": "reference_insight",
+          "source_id": "insight_car_mess_hook",
+          "usage_purpose": "Support the opening hook structure."
+        }
+      ],
+      "risk_notes": [
+        "Do not state suction, wattage, runtime, or noise level."
+      ]
+    }
+  ]
+}

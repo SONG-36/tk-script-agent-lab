@@ -1,0 +1,13 @@
+{
+  "reference_insights": [
+    {
+      "insight_id": "insight_car_mess_hook",
+      "reference_video_id": "ref_video_schema_fixture_1",
+      "insight_type": "HOOK",
+      "description": "Open with a visible small car-interior mess before discussing cleanup.",
+      "evidence_text": "A driver noticing small debris in a car interior.",
+      "start_second": null,
+      "end_second": null
+    }
+  ]
+}

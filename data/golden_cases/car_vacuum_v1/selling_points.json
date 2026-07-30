@@ -1,18 +1,18 @@
 {
-  "case_id": "car_vacuum_v1",
   "selling_points": [
     {
-      "id": "sp_clean_car_mess",
-      "claim": {
-        "value": null,
-        "status": "unverified"
-      },
-      "audience_pain": "Small debris and dust inside a car are inconvenient to clean with household tools.",
-      "required_evidence": [
-        "confirmed product capability",
-        "confirmed usage scenario"
+      "selling_point_id": "sp_car_interior_cleanup_context",
+      "product_id": "prod_car_vacuum_schema_fixture",
+      "title": "Car interior cleanup context",
+      "description": "The fixture may discuss cleaning small messes inside a car, without making specific performance claims.",
+      "fact_ids": [
+        "fact_product_category",
+        "fact_usage_context"
       ],
-      "source_ids": []
+      "target_pain_points": [
+        "Small debris and dust inside a car are inconvenient to clean with household tools."
+      ],
+      "priority": 3
     }
   ]
 }

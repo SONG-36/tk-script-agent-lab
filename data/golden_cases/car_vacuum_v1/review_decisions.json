@@ -1,0 +1,12 @@
+{
+  "review_decisions": [
+    {
+      "review_id": "review_script_pending",
+      "target_type": "script_draft",
+      "target_id": "script_schema_fixture_1",
+      "decision": "PENDING",
+      "reviewer": null,
+      "comment": null
+    }
+  ]
+}

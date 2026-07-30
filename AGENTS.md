@@ -12,4 +12,4 @@ Rules for Codex and other coding agents working in this repository:
 - Do not weaken existing test assertions.
 - Do not import `enrichment_agent`.
 - Do not depend on local paths from the reference repository.
-- Do not add Agent, RAG, LangGraph, model SDK, tool calling, API, scraping, service, or database code during Phase 0.
+- Do not add Agent, RAG, LangGraph, model SDK, tool calling, API, scraping, service, or database code during Phase 0 or Phase 1A.

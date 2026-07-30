@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 0 is complete when the repository baseline, documents, fixtures, and tests exist.
+Current status: Phase 1A implementation scope. Phase 1A is complete only when tests and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -11,6 +11,14 @@ No TikTok Agent business logic is implemented in Phase 0.
 ## Phase 1A: Deterministic Domain Model
 
 Build deterministic product, fact, selling point, reference video, requirement, and validation models. Keep all validation rules in code.
+
+Implemented scope:
+
+- fixed Pydantic v2 domain schemas;
+- stable IDs for business objects;
+- ID-only cross-object references;
+- deterministic cross-reference validator;
+- Golden Case loading, validation, serialization, and reload tests.
 
 ## Phase 2: Real LLM
 

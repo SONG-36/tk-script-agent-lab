@@ -1,20 +1,22 @@
 {
-  "case_id": "car_vacuum_v1",
-  "product_type": {
-    "value": "car vacuum cleaner",
-    "status": "example_input"
-  },
-  "brand": {
-    "value": null,
-    "status": "unverified"
-  },
-  "model_name": {
-    "value": null,
-    "status": "unverified"
-  },
-  "target_market": {
-    "value": null,
-    "status": "unverified"
-  },
-  "confirmed_claims": []
+  "product_id": "prod_car_vacuum_schema_fixture",
+  "product_name": "Car Vacuum Schema Fixture",
+  "category": "car vacuum cleaner",
+  "target_market": "Schema validation fixture",
+  "target_audiences": [
+    "Car owners",
+    "Drivers who clean small interior messes",
+    "Car owners"
+  ],
+  "usage_scenarios": [
+    "Car interior dust cleanup",
+    "Small debris cleanup in seats or floor mats",
+    "Car interior dust cleanup"
+  ],
+  "prohibited_claims": [
+    "Do not claim a specific suction strength without a verified source.",
+    "Do not claim a specific power rating without a verified source.",
+    "Do not claim a specific battery runtime without a verified source."
+  ],
+  "notes": "Schema-only product profile. This is not a confirmed real SKU."
 }
