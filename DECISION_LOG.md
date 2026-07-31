@@ -59,3 +59,15 @@ Reason: one model boundary is easier to observe, debug, and evaluate at a time. 
 Decision: model output is limited to semantic candidate content, and official `CreativeIdea` IDs, `SourceUsage` IDs, `product_id`, ordering, and validation errors are produced by deterministic code.
 
 Reason: model-generated IDs can be duplicate, unstable, invalid, or inconsistent with the domain graph. Deterministic mapping keeps cross-object references auditable and repeatable.
+
+## 2026-07-31: Phase 2B Replaces Only ScriptDraft Generation
+
+Decision: Phase 2B replaces only `ScriptDraft` generation with an optional OpenAI provider.
+
+Reason: this keeps one model boundary under test at a time. Fake Creative + OpenAI Script can isolate script generation, while the human gate ensures the script model only receives an approved creative idea.
+
+## 2026-07-31: Script And Scene Identities Are Deterministic
+
+Decision: model output is limited to script semantic content, scenes, and source usage candidates. Official `script_id`, `scene_id`, scene sequence, `product_id`, `creative_idea_id`, and `source_usage_id` are produced by deterministic code.
+
+Reason: script and scene identities must be stable, auditable, and bound to the approved creative idea. The model is not trusted to create durable IDs or cross-object relationships.

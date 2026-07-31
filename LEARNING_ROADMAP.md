@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 2A implementation scope. Phase 2A is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
+Current status: Phase 2B implementation scope. Phase 2B is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -42,7 +42,7 @@ Completed scope:
 
 ## Phase 2A: OpenAI CreativeIdea Provider
 
-Current scope:
+Completed scope:
 
 - optional OpenAI provider for `CreativeIdea` generation only;
 - Fake Provider remains the default no-key path;
@@ -56,7 +56,14 @@ Phase 2A does not generate real `ScriptDraft` values. Phase 2B should handle tha
 
 ## Phase 2B: Real ScriptDraft Provider
 
-Replace only the script generation boundary with a real model after OpenAI-generated ideas can be reviewed and selected. Keep validation and human approval outside the model.
+Current scope:
+
+- optional OpenAI provider for `ScriptDraft` generation only after human approval;
+- independent Creative and Script provider configuration;
+- Pydantic structured output for script candidates and scenes;
+- deterministic script, scene, product, creative idea, and source usage IDs;
+- source and selected-idea validation before completion;
+- Fake Creative + OpenAI Script as the primary live validation path.
 
 ## Phase 3: Minimal RAG
 

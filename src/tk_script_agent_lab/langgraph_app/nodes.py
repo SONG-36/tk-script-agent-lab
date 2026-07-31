@@ -22,10 +22,12 @@ from tk_script_agent_lab.providers import (
     CreativeGenerationRequest,
     FakeContentProvider,
     OpenAICreativeProvider,
+    OpenAIScriptProvider,
     ProviderOutputError,
     ScriptGenerationRequest,
 )
 from tk_script_agent_lab.providers.openai_creative import failed_model_call_record
+from tk_script_agent_lab.providers.openai_script import failed_script_model_call_record
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
 
@@ -406,9 +408,31 @@ def apply_human_review(state: GraphState) -> GraphState:
     }
 
 
-def generate_script(state: GraphState) -> GraphState:
+def generate_script(
+    state: GraphState,
+    runtime: Runtime[GraphConfiguration] = None,  # type: ignore[assignment]
+) -> GraphState:
     workflow_input = state["workflow_input"]
     records = _records(state)
+    configuration = _configuration(runtime)
+    review = state.get("idea_review")
+    if review is None or review.decision != ReviewDecisionType.APPROVED:
+        error = _graph_error(
+            "INVALID_WORKFLOW_STATE",
+            "Script generation requires an approved creative idea review.",
+            field="idea_review",
+        )
+        records.append(
+            _step(
+                records,
+                "generate_script",
+                "MODEL" if configuration.script_provider == "openai" else "FAKE_PROVIDER",
+                "FAILED",
+                error_codes=[error.code],
+            )
+        )
+        return {"status": WorkflowStatus.FAILED, "validation_errors": [error], "step_records": records}
+
     selected_idea = _find_idea(state, state.get("selected_idea_id"))
     if selected_idea is None:
         error = _graph_error(
@@ -418,36 +442,90 @@ def generate_script(state: GraphState) -> GraphState:
             related_id=state.get("selected_idea_id"),
         )
         records.append(
-            _step(records, "generate_script", "FAKE_PROVIDER", "FAILED", error_codes=[error.code])
+            _step(
+                records,
+                "generate_script",
+                "MODEL" if configuration.script_provider == "openai" else "FAKE_PROVIDER",
+                "FAILED",
+                error_codes=[error.code],
+            )
         )
         return {"status": WorkflowStatus.FAILED, "validation_errors": [error], "step_records": records}
 
+    request = ScriptGenerationRequest(
+        product_profile=workflow_input.product_profile,
+        product_facts=workflow_input.product_facts,
+        selling_points=workflow_input.selling_points,
+        reference_insights=state.get("reference_insights", []),
+        selected_idea=selected_idea,
+    )
     try:
-        script = _provider().generate_script(
-            ScriptGenerationRequest(
-                product_profile=workflow_input.product_profile,
-                product_facts=workflow_input.product_facts,
-                selling_points=workflow_input.selling_points,
-                reference_insights=state.get("reference_insights", []),
-                selected_idea=selected_idea,
-            )
-        )
+        if configuration.script_provider == "fake":
+            script = _provider().generate_script(request)
+            model_call_records = state.get("model_call_records", [])
+            executor = "FAKE_PROVIDER"
+        else:
+            if configuration.script_model is None:
+                raise ProviderOutputError(
+                    _graph_error(
+                        "MODEL_CONFIGURATION_MISSING",
+                        "script_model is required for OpenAI script provider.",
+                        object_type="GraphConfiguration",
+                        field="script_model",
+                    )
+                )
+            result = OpenAIScriptProvider(
+                model=configuration.script_model,
+                prompt_version=configuration.script_prompt_version,
+            ).generate_script(request)
+            script = result.script_draft
+            model_call_records = [
+                *state.get("model_call_records", []),
+                result.model_call_record,
+            ]
+            executor = "MODEL"
         records.append(
             _step(
                 records,
                 "generate_script",
-                "FAKE_PROVIDER",
+                executor,
                 "SUCCESS",
                 input_ids=[selected_idea.creative_idea_id],
                 output_ids=[script.script_id],
             )
         )
-        return {"script_draft": script, "validation_errors": [], "step_records": records}
+        return {
+            "script_draft": script,
+            "validation_errors": [],
+            "step_records": records,
+            "model_call_records": model_call_records,
+        }
     except ProviderOutputError as exc:
+        model_call_records = state.get("model_call_records", [])
+        if configuration.script_provider == "openai":
+            model_call_records = [
+                *model_call_records,
+                failed_script_model_call_record(
+                    model=configuration.script_model or "",
+                    prompt_version=configuration.script_prompt_version,
+                    error_code=exc.error.code,
+                ),
+            ]
         records.append(
-            _step(records, "generate_script", "FAKE_PROVIDER", "FAILED", error_codes=[exc.error.code])
+            _step(
+                records,
+                "generate_script",
+                "MODEL" if configuration.script_provider == "openai" else "FAKE_PROVIDER",
+                "FAILED",
+                error_codes=[exc.error.code],
+            )
         )
-        return {"status": WorkflowStatus.FAILED, "validation_errors": [exc.error], "step_records": records}
+        return {
+            "status": WorkflowStatus.FAILED,
+            "validation_errors": [exc.error],
+            "step_records": records,
+            "model_call_records": model_call_records,
+        }
 
 
 def validate_script(state: GraphState) -> GraphState:
@@ -455,10 +533,14 @@ def validate_script(state: GraphState) -> GraphState:
     records = _records(state)
     script = state.get("script_draft")
     selected_idea_id = state.get("selected_idea_id")
+    prior_errors = state.get("validation_errors", [])
     errors: list[ValidationError] = []
 
     if script is None:
-        errors.append(_graph_error("SCRIPT_NOT_AVAILABLE", "ScriptDraft is missing."))
+        if prior_errors:
+            errors.extend(prior_errors)
+        else:
+            errors.append(_graph_error("SCRIPT_NOT_AVAILABLE", "ScriptDraft is missing."))
     else:
         if script.creative_idea_id != selected_idea_id:
             errors.append(

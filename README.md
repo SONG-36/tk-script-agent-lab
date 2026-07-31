@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 2A.
+Current status: Phase 2B.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -16,7 +16,9 @@ Phase 1C adds a LangGraph visualization and orchestration layer over the already
 
 Phase 2A adds an optional real OpenAI provider for `CreativeIdea` generation only. The default remains Fake Provider mode, so the project can run and test without an API key or model cost.
 
-There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, real `ScriptDraft` model calls, or production services.
+Phase 2B adds an optional real OpenAI provider for `ScriptDraft` generation after a human approves a creative idea.
+
+There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
 ## Learning Goal
 
@@ -31,7 +33,7 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 2A replaces only the creative idea model boundary with optional OpenAI structured output. Later phases may introduce real script generation, minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 2B replaces only the script draft model boundary with optional OpenAI structured output. Later phases may introduce minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
 
 ## Phase 1A Capability
 
@@ -175,6 +177,44 @@ Runtime configuration for Fake and OpenAI modes is documented in [docs/RUNTIME_C
 
 Script boundary: Phase 2A only replaces `CreativeIdea` generation. `ReferenceInsight` is still manually supplied, and `ScriptDraft` is still backed by Fake Provider fixtures. If an OpenAI-generated new idea is approved and no fixture script exists, the graph returns `SCRIPT_NOT_AVAILABLE`; it does not create a default script, choose another idea, or fabricate a `ScriptDraft`. Phase 2B is the correct place to replace script generation with a real model.
 
+## Phase 2B Capability
+
+Phase 2B can:
+
+- keep Creative and Script providers independently configurable;
+- run all fake mode for zero-cost regression;
+- run OpenAI Creative with Fake Script to preserve the Phase 2A boundary;
+- run Fake Creative with OpenAI Script to isolate script generation;
+- run OpenAI Creative with OpenAI Script for the full real model chain;
+- call OpenAI Script generation only after a human `APPROVED` decision;
+- map script candidates to deterministic `ScriptDraft`, `ScriptScene`, and `SourceUsage` IDs;
+- validate the script against the selected creative idea, product, sources, and explicit fact boundaries.
+
+Supported provider combinations:
+
+| Creative Provider | Script Provider | Expected Use |
+|---|---|---|
+| `fake` | `fake` | zero-cost full regression |
+| `openai` | `fake` | real creative idea only |
+| `fake` | `openai` | real script generation only |
+| `openai` | `openai` | full real creative-to-script chain |
+
+Script demo:
+
+```bash
+export OPENAI_API_KEY="<your-openai-api-key>"
+export OPENAI_MODEL="<available-model-name>"
+uv run python scripts/run_phase_2b_openai_script_demo.py \
+  --creative-provider fake \
+  --script-provider openai \
+  --selected-idea-id idea_before_after_cleanup \
+  --reviewer phase-2b-reviewer
+```
+
+Runtime configuration is documented in [docs/RUNTIME_CONFIGURATION.md](docs/RUNTIME_CONFIGURATION.md).
+
+Current boundary: `ReferenceInsight` is still manually supplied, creative selection is still human-controlled, and there is no second automatic script review. A generated `ScriptDraft` must still be inspected by the team.
+
 ## Running Tests
 
 ```bash
@@ -190,7 +230,6 @@ uv run python -m pytest -q
 - no real creator scraping;
 - no business API integration;
 - no RAG, Skills, Tool Calling, or vector database;
-- no real `ScriptDraft` model in Phase 2A;
 - no copied `enrichment_agent` package from the reference project.
 
 ## Reference

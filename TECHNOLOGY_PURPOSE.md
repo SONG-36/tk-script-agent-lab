@@ -59,3 +59,15 @@ The deterministic validator still owns source and fact rules. It checks source I
 LangGraph owns orchestration: selecting Fake or OpenAI mode from configuration, writing generated ideas into state, routing failures to `END`, and interrupting for human review.
 
 The Human Gate owns the creative decision. The model does not auto-select, auto-approve, auto-review, or generate a fallback script.
+
+## Phase 2B OpenAI Script Boundary
+
+OpenAI Script Provider is introduced in Phase 2B only for `ScriptDraft` semantic generation after a human approves one `CreativeIdea`.
+
+OpenAI Creative Provider owns optional creative idea generation. OpenAI Script Provider owns optional script generation. The two providers are configured independently so each model boundary can be tested alone.
+
+LangGraph owns orchestration: routing through validation, interrupting for human choice, and invoking script generation only after `APPROVED`.
+
+Pydantic owns structured output shape for script candidates and scenes. Deterministic code owns script IDs, scene IDs, sequence numbers, product binding, selected creative idea binding, source usage IDs, and validation errors.
+
+The validator owns explicit ID, source, product, selected idea, and verified fact boundaries. A model-generated script can still be low quality or contain subtle unsupported natural language; structured output and validation do not prove creative quality or absolute factual truth.
