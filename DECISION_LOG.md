@@ -83,3 +83,21 @@ Reason: the knowledge set is small, selection must be explainable, and the team 
 Decision: Creative Knowledge can guide expression, structure, shootability, and claim-safety discipline, but it cannot be cited as `SourceUsage`.
 
 Reason: ProductFact, SellingPoint, and ReferenceInsight remain the only allowed business evidence sources. Knowledge IDs entering `SourceUsage` would make creative hypotheses look like factual proof.
+
+## 2026-07-31: Framework Baseline V1 Freezes Dependency Direction
+
+Decision: freeze Framework Baseline V1 before vector RAG.
+
+Reason: Phase 3A increased the number of moving parts, and future RAG will add more infrastructure. Freezing dependency direction now reduces the risk that Graph, Provider, Prompt, and Retriever layers contaminate each other.
+
+## 2026-07-31: Knowledge Retrieval Is A Port
+
+Decision: knowledge retrieval is represented by `KnowledgeRetriever`, not by OpenAI providers.
+
+Reason: retrieval must be observable and replaceable. Static and future vector retrieval should share a contract, while providers remain responsible only for generation and provider-boundary validation.
+
+## 2026-07-31: Static Knowledge Remains Supported After Vector RAG
+
+Decision: static knowledge remains a supported retriever implementation even after vector retrieval is introduced later.
+
+Reason: static retrieval is zero-cost, deterministic, useful for regression tests, and appropriate for small curated knowledge sets.

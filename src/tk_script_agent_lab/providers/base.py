@@ -12,7 +12,7 @@ from tk_script_agent_lab.domain import (
     SellingPoint,
     ValidationError,
 )
-from tk_script_agent_lab.knowledge.models import CreativeKnowledgeItem
+from tk_script_agent_lab.knowledge.contracts import RetrievedKnowledge
 
 
 class ReferenceAnalysisRequest(BaseModel):
@@ -30,7 +30,7 @@ class CreativeGenerationRequest(BaseModel):
     product_facts: list[ProductFact]
     selling_points: list[SellingPoint]
     reference_insights: list[ReferenceInsight]
-    creative_knowledge_items: list[CreativeKnowledgeItem] = Field(default_factory=list)
+    creative_knowledge_items: list[RetrievedKnowledge] = Field(default_factory=list)
     idea_count: int = Field(ge=1)
 
 

@@ -25,7 +25,11 @@ from tk_script_agent_lab.domain.enums import (
     ReviewDecisionType,
     VerificationStatus,
 )
-from tk_script_agent_lab.knowledge import CreativeKnowledgeItem, KnowledgeSelectionRecord
+from tk_script_agent_lab.knowledge import (
+    CreativeKnowledgeItem,
+    KnowledgeSelectionRecord,
+    RetrievedKnowledge,
+)
 from tk_script_agent_lab.langgraph_app.graph import build_graph
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
@@ -49,6 +53,7 @@ def main() -> None:
             CreativeKnowledgeItem,
             InsightType,
             KnowledgeSelectionRecord,
+            RetrievedKnowledge,
             ProductFact,
             ProductProfile,
             ReferenceInsight,

@@ -18,8 +18,16 @@ from tk_script_agent_lab.langgraph_app.state import (
     GraphState,
     ReviewResumePayload,
 )
-from tk_script_agent_lab.knowledge import StaticCreativeKnowledgeSelector
-from tk_script_agent_lab.knowledge.loader import KnowledgePackError, load_creative_knowledge_pack
+from tk_script_agent_lab.knowledge import (
+    KnowledgeExclusion,
+    KnowledgeSelectionInputs,
+    KnowledgeSelectionRecord,
+    RetrievalRequest,
+    RetrievalResult,
+    RetrievalTrace,
+    StaticKnowledgeRetriever,
+)
+from tk_script_agent_lab.knowledge.models import stable_selection_id
 from tk_script_agent_lab.knowledge.selector import KnowledgeSelectionError
 from tk_script_agent_lab.providers import (
     CreativeGenerationRequest,
@@ -156,15 +164,22 @@ def select_creative_knowledge(
     workflow_input = state["workflow_input"]
     records = _records(state)
     configuration = _configuration(runtime)
-    selector = StaticCreativeKnowledgeSelector(
-        selector_version=configuration.knowledge_selector_version
-    )
     try:
+        request = _retrieval_request(
+            workflow_input,
+            limit=configuration.creative_knowledge_limit,
+        )
         if configuration.knowledge_mode == "off":
-            record = selector.empty_record(
-                target_market=workflow_input.product_profile.target_market,
-                product_category=workflow_input.product_profile.category,
-                limit=configuration.creative_knowledge_limit,
+            result = _empty_retrieval_result(
+                request,
+                retriever_version=configuration.knowledge_selector_version,
+            )
+            record = _knowledge_selection_record(
+                result,
+                mode="off",
+                selection_inputs=_selection_inputs(request),
+                pack_id=None,
+                pack_version=None,
             )
             records.append(
                 _step(
@@ -186,12 +201,15 @@ def select_creative_knowledge(
             raise KnowledgeSelectionError(
                 "creative_knowledge_pack is required when knowledge_mode is static"
             )
-        pack = load_creative_knowledge_pack(configuration.creative_knowledge_pack)
-        selected_items, record = selector.select(
-            pack=pack,
-            target_market=workflow_input.product_profile.target_market,
-            product_category=workflow_input.product_profile.category,
-            limit=configuration.creative_knowledge_limit,
+        result = _knowledge_retriever(configuration).retrieve(request)
+        if result.errors:
+            raise KnowledgeRetrievalNodeError(result)
+        record = _knowledge_selection_record(
+            result,
+            mode="static",
+            selection_inputs=_selection_inputs(request),
+            pack_id=result.trace.filters_applied.get("pack_id"),
+            pack_version=result.trace.filters_applied.get("pack_version"),
         )
         records.append(
             _step(
@@ -199,17 +217,35 @@ def select_creative_knowledge(
                 "select_creative_knowledge",
                 "DETERMINISTIC_CODE",
                 "SUCCESS",
-                input_ids=[pack.pack_id],
-                output_ids=[item.knowledge_id for item in selected_items],
+                input_ids=[record.pack_id] if record.pack_id else [],
+                output_ids=[item.knowledge_id for item in result.items],
             )
         )
         return {
-            "creative_knowledge_items": selected_items,
+            "creative_knowledge_items": result.items,
             "knowledge_selection_records": [record],
             "validation_errors": [],
             "step_records": records,
         }
-    except (KnowledgePackError, KnowledgeSelectionError) as exc:
+    except KnowledgeRetrievalNodeError as exc:
+        errors = exc.result.errors
+        records.append(
+            _step(
+                records,
+                "select_creative_knowledge",
+                "DETERMINISTIC_CODE",
+                "FAILED",
+                error_codes=[error.code for error in errors],
+            )
+        )
+        return {
+            "status": WorkflowStatus.FAILED,
+            "creative_knowledge_items": [],
+            "knowledge_selection_records": [],
+            "validation_errors": errors,
+            "step_records": records,
+        }
+    except KnowledgeSelectionError as exc:
         error = _graph_error(
             exc.code,
             str(exc),
@@ -731,6 +767,107 @@ def _provider() -> FakeContentProvider:
     )
     _workflow_input, fixtures, _reviews = load_golden_case(case_dir)
     return FakeContentProvider(fixtures)
+
+
+class KnowledgeRetrievalNodeError(Exception):
+    def __init__(self, result: RetrievalResult) -> None:
+        super().__init__("knowledge retrieval failed")
+        self.result = result
+
+
+def _retrieval_request(
+    workflow_input: WorkflowInput,
+    *,
+    limit: int,
+) -> RetrievalRequest:
+    return RetrievalRequest(
+        stage="creative",
+        target_market=workflow_input.product_profile.target_market,
+        product_category=workflow_input.product_profile.category,
+        query=f"Creative guidance for {workflow_input.product_profile.product_name}",
+        limit=limit,
+        filters={
+            "product_id": workflow_input.product_profile.product_id,
+        },
+    )
+
+
+def _knowledge_retriever(configuration: GraphConfiguration):
+    if configuration.creative_knowledge_pack is None:
+        raise KnowledgeSelectionError(
+            "creative_knowledge_pack is required when knowledge_mode is static"
+        )
+    return StaticKnowledgeRetriever(
+        pack_id=configuration.creative_knowledge_pack,
+        retriever_version=configuration.knowledge_selector_version,
+    )
+
+
+def _empty_retrieval_result(
+    request: RetrievalRequest,
+    *,
+    retriever_version: str,
+) -> RetrievalResult:
+    return RetrievalResult(
+        items=[],
+        trace=RetrievalTrace(
+            retriever_type="static",
+            retriever_version=retriever_version,
+            request_id=stable_selection_id(
+                mode="off",
+                pack_id=None,
+                pack_version=None,
+                selector_version=retriever_version,
+                selection_inputs=_selection_inputs(request),
+                selected_ids=[],
+            ),
+            candidate_ids=[],
+            selected_ids=[],
+            excluded=[],
+            filters_applied={
+                **request.filters,
+                "target_market": request.target_market,
+                "product_category": request.product_category,
+            },
+        ),
+        errors=[],
+    )
+
+
+def _selection_inputs(request: RetrievalRequest) -> KnowledgeSelectionInputs:
+    return KnowledgeSelectionInputs(
+        target_market=request.target_market,
+        product_category=request.product_category,
+        limit=request.limit,
+    )
+
+
+def _knowledge_selection_record(
+    result: RetrievalResult,
+    *,
+    mode: str,
+    selection_inputs: KnowledgeSelectionInputs,
+    pack_id: str | None,
+    pack_version: str | None,
+) -> KnowledgeSelectionRecord:
+    return KnowledgeSelectionRecord(
+        selection_id=result.trace.request_id,
+        stage="creative",
+        mode=mode,  # type: ignore[arg-type]
+        pack_id=pack_id,
+        pack_version=pack_version,
+        selector_version=result.trace.retriever_version,
+        candidate_ids=result.trace.candidate_ids,
+        selected_ids=result.trace.selected_ids,
+        excluded_items=[
+            KnowledgeExclusion(
+                knowledge_id=item.knowledge_id,
+                reason=item.reason,  # type: ignore[arg-type]
+            )
+            for item in result.trace.excluded
+        ],
+        selection_inputs=selection_inputs,
+    )
 
 
 def _configuration(

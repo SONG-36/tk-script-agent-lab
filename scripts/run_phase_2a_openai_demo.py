@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from pathlib import Path
 import json
 import os
@@ -26,12 +27,17 @@ from tk_script_agent_lab.domain.enums import (
     VerificationStatus,
 )
 from tk_script_agent_lab.langgraph_app.graph import build_graph
-from tk_script_agent_lab.knowledge import CreativeKnowledgeItem, KnowledgeSelectionRecord
+from tk_script_agent_lab.knowledge import (
+    CreativeKnowledgeItem,
+    KnowledgeSelectionRecord,
+    RetrievedKnowledge,
+)
 from tk_script_agent_lab.providers import ModelCallRecord
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    _parser().parse_args(argv)
     api_key = os.environ.get("OPENAI_API_KEY")
     model = os.environ.get("OPENAI_MODEL")
     if not api_key:
@@ -102,6 +108,10 @@ def main() -> int:
     return 0
 
 
+def _parser() -> ArgumentParser:
+    return ArgumentParser(description="Run the Phase 2A live OpenAI creative idea demo.")
+
+
 def _serializer() -> JsonPlusSerializer:
     return JsonPlusSerializer(allowed_msgpack_modules=()).with_msgpack_allowlist(
         [
@@ -109,6 +119,7 @@ def _serializer() -> JsonPlusSerializer:
             CreativeKnowledgeItem,
             InsightType,
             KnowledgeSelectionRecord,
+            RetrievedKnowledge,
             ModelCallRecord,
             ProductFact,
             ProductProfile,

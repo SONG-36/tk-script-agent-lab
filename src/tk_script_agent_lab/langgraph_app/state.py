@@ -14,7 +14,7 @@ from tk_script_agent_lab.domain import (
     ValidationError,
 )
 from tk_script_agent_lab.domain.product import _require_non_empty
-from tk_script_agent_lab.knowledge import CreativeKnowledgeItem, KnowledgeSelectionRecord
+from tk_script_agent_lab.knowledge import KnowledgeSelectionRecord, RetrievedKnowledge
 from tk_script_agent_lab.workflow import (
     WorkflowInput,
     WorkflowStatus,
@@ -66,7 +66,7 @@ class GraphState(TypedDict, total=False):
     workflow_input: WorkflowInput
     reference_insights: list[ReferenceInsight]
     creative_ideas: list[CreativeIdea]
-    creative_knowledge_items: list[CreativeKnowledgeItem]
+    creative_knowledge_items: list[RetrievedKnowledge]
     knowledge_selection_records: list[KnowledgeSelectionRecord]
     selected_idea_id: str | None
     idea_review: ReviewDecision | None

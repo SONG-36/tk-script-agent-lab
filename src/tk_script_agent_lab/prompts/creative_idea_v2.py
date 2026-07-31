@@ -31,10 +31,10 @@ def build_creative_idea_context(request: CreativeGenerationRequest) -> dict[str,
             "knowledge_id": item.knowledge_id,
             "kind": item.kind,
             "title": item.title,
-            "instruction": item.instruction,
-            "rationale": item.rationale,
-            "positive_examples": item.positive_examples,
-            "anti_examples": item.anti_examples,
+            "instruction": item.content,
+            "rationale": item.metadata.get("rationale"),
+            "positive_examples": _metadata_json_list(item.metadata.get("positive_examples")),
+            "anti_examples": _metadata_json_list(item.metadata.get("anti_examples")),
             "provenance_type": item.provenance_type,
             "evidence_status": item.evidence_status,
             "boundary": "creative_guidance_only_not_business_evidence",
@@ -76,3 +76,12 @@ def build_creative_idea_prompt(request: CreativeGenerationRequest) -> str:
         "Use only BUSINESS EVIDENCE allowed_source_ids in source_usages.\n"
         "Do not put creative knowledge IDs in source_usages."
     )
+
+
+def _metadata_json_list(value: str | None) -> list[str]:
+    if not value:
+        return []
+    parsed = json.loads(value)
+    if not isinstance(parsed, list) or not all(isinstance(item, str) for item in parsed):
+        raise ValueError("creative guidance examples metadata must be a JSON string list")
+    return parsed
