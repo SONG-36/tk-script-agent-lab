@@ -71,3 +71,15 @@ Reason: this keeps one model boundary under test at a time. Fake Creative + Open
 Decision: model output is limited to script semantic content, scenes, and source usage candidates. Official `script_id`, `scene_id`, scene sequence, `product_id`, `creative_idea_id`, and `source_usage_id` are produced by deterministic code.
 
 Reason: script and scene identities must be stable, auditable, and bound to the approved creative idea. The model is not trusted to create durable IDs or cross-object relationships.
+
+## 2026-07-31: Phase 3A Uses Static Creative Knowledge Selection
+
+Decision: Phase 3A uses deterministic static knowledge selection before introducing RAG.
+
+Reason: the knowledge set is small, selection must be explainable, and the team should first validate whether the knowledge itself improves creative output before adding embeddings or a vector database. This keeps the A/B comparison controlled: Control and Treatment both use `creative_idea_v2`, and the only intended difference is `knowledge_mode`.
+
+## 2026-07-31: Creative Guidance Is Not Business Evidence
+
+Decision: Creative Knowledge can guide expression, structure, shootability, and claim-safety discipline, but it cannot be cited as `SourceUsage`.
+
+Reason: ProductFact, SellingPoint, and ReferenceInsight remain the only allowed business evidence sources. Knowledge IDs entering `SourceUsage` would make creative hypotheses look like factual proof.

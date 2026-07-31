@@ -62,6 +62,7 @@ def test_phase_1c_step_records_explain_full_chain() -> None:
     assert [record.step_name for record in completed["step_records"]] == [
         "validate_input",
         "validate_manual_insights",
+        "select_creative_knowledge",
         "generate_creative_ideas",
         "validate_creative_ideas",
         "human_select_idea",

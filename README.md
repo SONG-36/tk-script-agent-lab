@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 2B.
+Current status: Phase 3A.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -17,6 +17,8 @@ Phase 1C adds a LangGraph visualization and orchestration layer over the already
 Phase 2A adds an optional real OpenAI provider for `CreativeIdea` generation only. The default remains Fake Provider mode, so the project can run and test without an API key or model cost.
 
 Phase 2B adds an optional real OpenAI provider for `ScriptDraft` generation after a human approves a creative idea.
+
+Phase 3A adds static Creative Knowledge Pack injection and Control / Treatment A/B comparison for creative idea generation.
 
 There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
@@ -33,7 +35,7 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 2B replaces only the script draft model boundary with optional OpenAI structured output. Later phases may introduce minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 3A adds only static Creative Knowledge guidance before creative idea generation. Later phases may introduce minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
 
 ## Phase 1A Capability
 
@@ -215,6 +217,74 @@ Runtime configuration is documented in [docs/RUNTIME_CONFIGURATION.md](docs/RUNT
 
 Current boundary: `ReferenceInsight` is still manually supplied, creative selection is still human-controlled, and there is no second automatic script review. A generated `ScriptDraft` must still be inspected by the team.
 
+## Phase 3A Capability
+
+Phase 3A can:
+
+- load a static Creative Knowledge Pack from YAML;
+- validate the pack with fixed Pydantic schemas;
+- use a fixed pack-id loader instead of arbitrary file paths;
+- select applicable knowledge with deterministic code;
+- record `KnowledgeSelectionRecord` values in Graph state and output;
+- insert a deterministic `select_creative_knowledge` Graph node before creative generation;
+- use `creative_idea_v2` for both Control and Treatment runs;
+- run Control / Treatment A/B comparison for creative idea generation;
+- keep `ScriptDraft` generation unchanged from Phase 2B.
+
+Phase 3A Graph flow:
+
+```text
+validate_manual_insights
+→ select_creative_knowledge
+→ generate_creative_ideas
+→ validate_creative_ideas
+→ human_select_idea
+→ INTERRUPT
+```
+
+Creative Knowledge is Creative Guidance, not Business Evidence. Product facts, selling points, and reference insights remain the only allowed business evidence sources for `SourceUsage`. A `knowledge_id` must not enter `CreativeIdea.source_usages`.
+
+Current knowledge documentation:
+
+- [knowledge/README.md](knowledge/README.md)
+- [docs/RUNTIME_CONFIGURATION.md](docs/RUNTIME_CONFIGURATION.md)
+- [docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md](docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md)
+
+Phase 3A is not RAG. It does not implement embeddings, a vector database, semantic retrieval, top-k similarity search, or a reranker. `ScriptDraft` Knowledge Pack injection is not implemented.
+
+Phase 3A A/B demo:
+
+```bash
+# View help. This does not read environment variables and does not call a model.
+uv run python scripts/run_phase_3a_creative_ab_demo.py --help
+```
+
+Run only Control:
+
+```bash
+uv run python scripts/run_phase_3a_creative_ab_demo.py \
+  --mode control \
+  --confirm-live
+```
+
+Run only Treatment:
+
+```bash
+uv run python scripts/run_phase_3a_creative_ab_demo.py \
+  --mode treatment \
+  --confirm-live
+```
+
+Run both variants:
+
+```bash
+uv run python scripts/run_phase_3a_creative_ab_demo.py \
+  --mode both \
+  --confirm-live
+```
+
+`control` calls OpenAI once. `treatment` calls OpenAI once. `both` calls OpenAI twice. If `--confirm-live` is not provided, the demo refuses to execute real calls. The A/B demo does not automatically announce a winner; use [docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md](docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md) for human review.
+
 ## Running Tests
 
 ```bash
@@ -230,6 +300,13 @@ uv run python -m pytest -q
 - no real creator scraping;
 - no business API integration;
 - no RAG, Skills, Tool Calling, or vector database;
+- no ScriptDraft Knowledge Pack;
+- no embeddings;
+- no vector database;
+- no semantic retrieval;
+- no reranker;
+- no automatic knowledge generation;
+- no automatic A/B winner selection;
 - no copied `enrichment_agent` package from the reference project.
 
 ## Reference

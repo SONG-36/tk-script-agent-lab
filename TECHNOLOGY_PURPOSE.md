@@ -9,6 +9,9 @@ Technology should be added only when it serves the current phase.
 | RAG | No | Yes | Phase 3 |
 | LangGraph | Yes | Yes | Phase 1C |
 | langchain-openai | Yes | Yes | Phase 2A |
+| YAML | Yes | Yes | Phase 3A |
+| Static Selector | Yes | Yes | Phase 3A |
+| A/B Rubric | Yes | Yes | Phase 3A |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -71,3 +74,19 @@ LangGraph owns orchestration: routing through validation, interrupting for human
 Pydantic owns structured output shape for script candidates and scenes. Deterministic code owns script IDs, scene IDs, sequence numbers, product binding, selected creative idea binding, source usage IDs, and validation errors.
 
 The validator owns explicit ID, source, product, selected idea, and verified fact boundaries. A model-generated script can still be low quality or contain subtle unsupported natural language; structured output and validation do not prove creative quality or absolute factual truth.
+
+## Phase 3A Static Creative Knowledge Boundary
+
+YAML is introduced as a human-readable carrier for a small Creative Knowledge Pack.
+
+Pydantic validates pack shape, item status, provenance, applicability, and stable selection records.
+
+The Static Selector is deterministic and transparent. It selects active creative-stage items by target market, product category, priority, and limit. It does not call a model and does not perform semantic retrieval.
+
+LangGraph adds one deterministic node, `select_creative_knowledge`, before `generate_creative_ideas`.
+
+OpenAI creative generation can read selected knowledge in `creative_idea_v2`, but knowledge remains creative guidance only. It is not ProductFact, SellingPoint, ReferenceInsight, or SourceUsage evidence.
+
+The A/B Rubric supports human review of Control and Treatment outputs. One run is not proof of long-term improvement.
+
+There is still no embedding, vector store, top-k retrieval, reranker, retrieval service, ScriptDraft knowledge injection, or RAG pipeline in Phase 3A.

@@ -26,6 +26,7 @@ from tk_script_agent_lab.domain.enums import (
     VerificationStatus,
 )
 from tk_script_agent_lab.langgraph_app.graph import build_graph
+from tk_script_agent_lab.knowledge import CreativeKnowledgeItem, KnowledgeSelectionRecord
 from tk_script_agent_lab.providers import ModelCallRecord
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
@@ -105,7 +106,9 @@ def _serializer() -> JsonPlusSerializer:
     return JsonPlusSerializer(allowed_msgpack_modules=()).with_msgpack_allowlist(
         [
             CreativeIdea,
+            CreativeKnowledgeItem,
             InsightType,
+            KnowledgeSelectionRecord,
             ModelCallRecord,
             ProductFact,
             ProductProfile,

@@ -1104,6 +1104,7 @@ dependencies = [
     { name = "langgraph-cli", extra = ["inmem"] },
     { name = "pydantic" },
     { name = "pytest" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
@@ -1113,6 +1114,7 @@ requires-dist = [
     { name = "langgraph-cli", extras = ["inmem"] },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pytest", specifier = ">=8.0" },
+    { name = "pyyaml", specifier = ">=6,<7" },
 ]
 
 [[package]]

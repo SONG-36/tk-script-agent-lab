@@ -18,6 +18,9 @@ from tk_script_agent_lab.langgraph_app.state import (
     GraphState,
     ReviewResumePayload,
 )
+from tk_script_agent_lab.knowledge import StaticCreativeKnowledgeSelector
+from tk_script_agent_lab.knowledge.loader import KnowledgePackError, load_creative_knowledge_pack
+from tk_script_agent_lab.knowledge.selector import KnowledgeSelectionError
 from tk_script_agent_lab.providers import (
     CreativeGenerationRequest,
     FakeContentProvider,
@@ -89,6 +92,8 @@ def validate_input(state: GraphState) -> GraphState:
             "workflow_input": workflow_input,
             "reference_insights": graph_input.reference_insights,
             "creative_ideas": [],
+            "creative_knowledge_items": [],
+            "knowledge_selection_records": [],
             "selected_idea_id": None,
             "idea_review": None,
             "script_draft": None,
@@ -105,6 +110,8 @@ def validate_input(state: GraphState) -> GraphState:
         "workflow_input": workflow_input,
         "reference_insights": graph_input.reference_insights,
         "creative_ideas": [],
+        "creative_knowledge_items": [],
+        "knowledge_selection_records": [],
         "selected_idea_id": None,
         "idea_review": None,
         "script_draft": None,
@@ -142,6 +149,92 @@ def validate_manual_insights(state: GraphState) -> GraphState:
     }
 
 
+def select_creative_knowledge(
+    state: GraphState,
+    runtime: Runtime[GraphConfiguration] = None,  # type: ignore[assignment]
+) -> GraphState:
+    workflow_input = state["workflow_input"]
+    records = _records(state)
+    configuration = _configuration(runtime)
+    selector = StaticCreativeKnowledgeSelector(
+        selector_version=configuration.knowledge_selector_version
+    )
+    try:
+        if configuration.knowledge_mode == "off":
+            record = selector.empty_record(
+                target_market=workflow_input.product_profile.target_market,
+                product_category=workflow_input.product_profile.category,
+                limit=configuration.creative_knowledge_limit,
+            )
+            records.append(
+                _step(
+                    records,
+                    "select_creative_knowledge",
+                    "DETERMINISTIC_CODE",
+                    "SUCCESS",
+                    input_ids=[workflow_input.product_profile.product_id],
+                    output_ids=[],
+                )
+            )
+            return {
+                "creative_knowledge_items": [],
+                "knowledge_selection_records": [record],
+                "validation_errors": [],
+                "step_records": records,
+            }
+        if configuration.creative_knowledge_pack is None:
+            raise KnowledgeSelectionError(
+                "creative_knowledge_pack is required when knowledge_mode is static"
+            )
+        pack = load_creative_knowledge_pack(configuration.creative_knowledge_pack)
+        selected_items, record = selector.select(
+            pack=pack,
+            target_market=workflow_input.product_profile.target_market,
+            product_category=workflow_input.product_profile.category,
+            limit=configuration.creative_knowledge_limit,
+        )
+        records.append(
+            _step(
+                records,
+                "select_creative_knowledge",
+                "DETERMINISTIC_CODE",
+                "SUCCESS",
+                input_ids=[pack.pack_id],
+                output_ids=[item.knowledge_id for item in selected_items],
+            )
+        )
+        return {
+            "creative_knowledge_items": selected_items,
+            "knowledge_selection_records": [record],
+            "validation_errors": [],
+            "step_records": records,
+        }
+    except (KnowledgePackError, KnowledgeSelectionError) as exc:
+        error = _graph_error(
+            exc.code,
+            str(exc),
+            object_type="CreativeKnowledgePack",
+            object_id=configuration.creative_knowledge_pack,
+            field="creative_knowledge_pack",
+        )
+        records.append(
+            _step(
+                records,
+                "select_creative_knowledge",
+                "DETERMINISTIC_CODE",
+                "FAILED",
+                error_codes=[error.code],
+            )
+        )
+        return {
+            "status": WorkflowStatus.FAILED,
+            "creative_knowledge_items": [],
+            "knowledge_selection_records": [],
+            "validation_errors": [error],
+            "step_records": records,
+        }
+
+
 def generate_creative_ideas(
     state: GraphState,
     runtime: Runtime[GraphConfiguration] = None,  # type: ignore[assignment]
@@ -154,6 +247,7 @@ def generate_creative_ideas(
         product_facts=workflow_input.product_facts,
         selling_points=workflow_input.selling_points,
         reference_insights=state.get("reference_insights", []),
+        creative_knowledge_items=state.get("creative_knowledge_items", []),
         idea_count=workflow_input.idea_count,
     )
     try:

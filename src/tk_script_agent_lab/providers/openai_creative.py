@@ -13,12 +13,7 @@ from tk_script_agent_lab.providers.model_output import (
     OpenAICreativeResult,
     map_candidate_to_creative_idea,
 )
-from tk_script_agent_lab.prompts.creative_idea_v1 import (
-    PROMPT_VERSION,
-    SYSTEM_INSTRUCTION,
-    build_creative_idea_context,
-    build_creative_idea_prompt,
-)
+from tk_script_agent_lab.prompts import creative_idea_v1, creative_idea_v2
 
 
 class StructuredCreativeModel(Protocol):
@@ -31,7 +26,7 @@ class OpenAICreativeProvider:
         self,
         *,
         model: str,
-        prompt_version: str = PROMPT_VERSION,
+        prompt_version: str = creative_idea_v1.PROMPT_VERSION,
         api_key_getter: Callable[[], str | None] | None = None,
         structured_model: StructuredCreativeModel | None = None,
     ) -> None:
@@ -63,8 +58,9 @@ class OpenAICreativeProvider:
             )
 
         try:
-            context = build_creative_idea_context(request)
-            prompt = build_creative_idea_prompt(request)
+            prompt_tools = _prompt_tools(self.prompt_version)
+            context = prompt_tools.build_context(request)
+            prompt = prompt_tools.build_prompt(request)
         except ValueError as exc:
             raise ProviderOutputError(
                 _error(
@@ -78,7 +74,7 @@ class OpenAICreativeProvider:
         try:
             raw_result = self._model(api_key).invoke(
                 [
-                    ("system", SYSTEM_INSTRUCTION),
+                    ("system", prompt_tools.system_instruction),
                     ("human", prompt),
                 ]
             )
@@ -197,6 +193,35 @@ def failed_model_call_record(
         output_ids=[],
         error_code=error_code,
     )
+
+
+class _PromptTools:
+    def __init__(
+        self,
+        *,
+        system_instruction: str,
+        build_context,
+        build_prompt,
+    ) -> None:
+        self.system_instruction = system_instruction
+        self.build_context = build_context
+        self.build_prompt = build_prompt
+
+
+def _prompt_tools(prompt_version: str) -> _PromptTools:
+    if prompt_version == creative_idea_v1.PROMPT_VERSION:
+        return _PromptTools(
+            system_instruction=creative_idea_v1.SYSTEM_INSTRUCTION,
+            build_context=creative_idea_v1.build_creative_idea_context,
+            build_prompt=creative_idea_v1.build_creative_idea_prompt,
+        )
+    if prompt_version == creative_idea_v2.PROMPT_VERSION:
+        return _PromptTools(
+            system_instruction=creative_idea_v2.SYSTEM_INSTRUCTION,
+            build_context=creative_idea_v2.build_creative_idea_context,
+            build_prompt=creative_idea_v2.build_creative_idea_prompt,
+        )
+    raise ValueError(f"unsupported creative prompt version: {prompt_version}")
 
 
 def _parse_structured_result(raw_result: object) -> tuple[CreativeIdeaBatch, object | None, object | None]:

@@ -4,6 +4,7 @@ from tk_script_agent_lab.langgraph_app.graph import build_graph
 from tk_script_agent_lab.langgraph_app.routing import (
     route_after_apply_human_review,
     route_after_generate_creative_ideas,
+    route_after_select_creative_knowledge,
     route_after_validate_creative_ideas,
     route_after_validate_input,
     route_after_validate_manual_insights,
@@ -24,6 +25,7 @@ def test_graph_nodes_match_expected_names() -> None:
     assert {
         "validate_input",
         "validate_manual_insights",
+        "select_creative_knowledge",
         "generate_creative_ideas",
         "validate_creative_ideas",
         "human_select_idea",
@@ -40,6 +42,7 @@ def test_conditional_edges_exist() -> None:
     assert set(graph.builder.branches) == {
         "validate_input",
         "validate_manual_insights",
+        "select_creative_knowledge",
         "generate_creative_ideas",
         "validate_creative_ideas",
         "apply_human_review",
@@ -60,8 +63,15 @@ def test_compiled_graph_static_topology_contains_expected_edges() -> None:
         ("validate_manual_insights", "__end__", "manual_insights_invalid", True),
         (
             "validate_manual_insights",
-            "generate_creative_ideas",
+            "select_creative_knowledge",
             "manual_insights_valid",
+            True,
+        ),
+        ("select_creative_knowledge", "__end__", "knowledge_selection_failed", True),
+        (
+            "select_creative_knowledge",
+            "generate_creative_ideas",
+            "knowledge_selected",
             True,
         ),
         ("generate_creative_ideas", "__end__", "generation_failed", True),
@@ -106,6 +116,14 @@ def test_routing_functions_return_expected_targets() -> None:
     assert (
         route_after_validate_manual_insights({"status": WorkflowStatus.READY})
         == "manual_insights_valid"
+    )
+    assert (
+        route_after_select_creative_knowledge({"status": WorkflowStatus.FAILED})
+        == "knowledge_selection_failed"
+    )
+    assert (
+        route_after_select_creative_knowledge({"status": WorkflowStatus.READY})
+        == "knowledge_selected"
     )
     assert (
         route_after_generate_creative_ideas({"status": WorkflowStatus.FAILED})

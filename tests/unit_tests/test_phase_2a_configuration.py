@@ -12,6 +12,10 @@ def test_configuration_defaults_to_fake_provider() -> None:
     assert config.script_provider == "fake"
     assert config.script_model is None
     assert config.script_prompt_version == "script_draft_v1"
+    assert config.knowledge_mode == "off"
+    assert config.creative_knowledge_pack is None
+    assert config.creative_knowledge_limit == 6
+    assert config.knowledge_selector_version == "static_selector_v1"
 
 
 def test_fake_mode_does_not_require_model_name() -> None:
@@ -51,6 +55,22 @@ def test_blank_model_name_is_rejected() -> None:
         GraphConfiguration(creative_provider="openai", creative_model=" ")
     with pytest.raises(ValidationError):
         GraphConfiguration(script_provider="openai", script_model=" ")
+    with pytest.raises(ValidationError):
+        GraphConfiguration(creative_knowledge_pack=" ")
+    with pytest.raises(ValidationError):
+        GraphConfiguration(knowledge_selector_version=" ")
+
+
+def test_static_knowledge_configuration_can_parse_pack_id_without_api_key() -> None:
+    config = GraphConfiguration(
+        knowledge_mode="static",
+        creative_knowledge_pack="tiktok_car_cleaning_v1",
+        creative_knowledge_limit=6,
+    )
+
+    assert config.knowledge_mode == "static"
+    assert config.creative_knowledge_pack == "tiktok_car_cleaning_v1"
+    assert "api" not in GraphConfiguration.model_fields
 
 
 def test_creative_and_script_providers_are_independent() -> None:

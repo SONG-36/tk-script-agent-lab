@@ -1,0 +1,128 @@
+pack_id: tiktok_car_cleaning_v1
+version: "1.0"
+title: TikTok Car Cleaning Creative Working Rules
+description: >
+  Internal working hypotheses for car-cleaning short-video creative ideas.
+  These rules guide expression and structure only. They are not product facts
+  and are not official TikTok policy.
+items:
+  - knowledge_id: ck_hook_visible_micro_mess
+    title: Open on a visible micro-mess
+    kind: hook_pattern
+    instruction: Start the idea with a small, easy-to-recognize car mess that can be shown immediately on camera.
+    rationale: Viewers understand the problem faster when the first frame shows a concrete mess instead of a generic claim.
+    positive_examples:
+      - Crumbs in a seat seam before the cleaner appears.
+      - Dust near a cup holder shown in close-up.
+    anti_examples:
+      - Starting with an abstract statement about cleaning power.
+      - Opening with unverified performance numbers.
+    priority: 90
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["car vacuum cleaner", "car_vacuum", "car cleaning accessory"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null
+  - knowledge_id: ck_diversity_distinct_angles
+    title: Keep ideas meaningfully distinct
+    kind: idea_diversity_rule
+    instruction: Generate ideas from different creative angles instead of repeating the same before-after structure with new wording.
+    rationale: A/B review is more useful when candidates test different hooks, scenes, or audience moments.
+    positive_examples:
+      - One idea focused on daily driver cleanup and another on post-road-trip reset.
+      - One idea built around a close-up mess and another around a quick routine.
+    anti_examples:
+      - Two ideas that both start with the same mess and same reveal.
+      - Reusing the same audience and scene with only a title change.
+    priority: 80
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["*"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null
+  - knowledge_id: ck_shootability_simple_actions
+    title: Favor simple shootable actions
+    kind: shootability_rule
+    instruction: Prefer actions that one person can film with ordinary car-interior angles and simple props.
+    rationale: Early creative ideas should be feasible before production planning adds crew, rigging, or complex effects.
+    positive_examples:
+      - Handheld close-up of debris, product entering frame, cleaned area shown.
+      - A short sequence from driver seat, floor mat, and center console.
+    anti_examples:
+      - Drone shots, elaborate set builds, or multi-location storytelling.
+      - Scenes requiring claims that the product has not verified.
+    priority: 75
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["car vacuum cleaner", "car_vacuum", "car cleaning accessory"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null
+  - knowledge_id: ck_claim_safety_no_unverified_performance
+    title: Do not turn guidance into product claims
+    kind: claim_safety_rule
+    instruction: Avoid adding performance, battery, suction, price, certification, or comparison claims unless they are present as verified business evidence.
+    rationale: Creative guidance must not become unsupported product evidence.
+    positive_examples:
+      - Show a cleanup moment without naming suction strength.
+      - Use risk notes when an idea might invite unverified claims.
+    anti_examples:
+      - Claiming a specific runtime or suction level from creative guidance.
+      - Saying the product is the best or officially recommended without evidence.
+    priority: 100
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["*"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null
+  - knowledge_id: ck_pattern_before_after_not_only_angle
+    title: Use before-after as one pattern, not the only pattern
+    kind: creative_pattern
+    instruction: Treat before-after cleanup as one possible structure, while allowing routine, discovery, and problem-solution angles.
+    rationale: A single repeated format can make the idea set look diverse while testing little.
+    positive_examples:
+      - A quick before-after idea plus a separate commuting routine idea.
+      - A discovery hook built around finding hidden debris.
+    anti_examples:
+      - Every candidate ending with the same reveal shot.
+      - Repeating the same transformation with different mess labels.
+    priority: 65
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["car vacuum cleaner", "car_vacuum", "car cleaning accessory"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null
+  - knowledge_id: ck_hook_action_consistency
+    title: Keep hook and action consistent
+    kind: hook_pattern
+    instruction: Make sure the hook promises a moment the concept summary can actually show with the available product evidence.
+    rationale: A strong hook can become misleading when the later scene does not support it.
+    positive_examples:
+      - Hook mentions cup-holder crumbs, and the idea shows cup-holder cleanup.
+      - Hook points to a post-snack mess, and the action stays in that scenario.
+    anti_examples:
+      - Hook promises deep detailing while the scene only shows light dusting.
+      - Hook frames pet hair removal without verified product support.
+    priority: 85
+    status: active
+    applicability:
+      task_stages: [creative]
+      target_markets: ["*"]
+      product_categories: ["*"]
+    provenance_type: internal_working_rule
+    evidence_status: hypothesis
+    source_reference: null

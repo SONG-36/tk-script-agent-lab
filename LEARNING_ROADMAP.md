@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 2B implementation scope. Phase 2B is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
+Current status: Phase 3A implementation scope. Phase 3A is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -64,6 +64,18 @@ Current scope:
 - deterministic script, scene, product, creative idea, and source usage IDs;
 - source and selected-idea validation before completion;
 - Fake Creative + OpenAI Script as the primary live validation path.
+
+## Phase 3A: Static Creative Knowledge Pack
+
+Current scope:
+
+- add a small human-readable Creative Knowledge Pack;
+- validate the pack with fixed Pydantic schemas;
+- select knowledge with deterministic code;
+- inject selected guidance into `creative_idea_v2`;
+- compare Control and Treatment runs without declaring an automatic winner.
+
+Phase 3A is not vector RAG. It does not add embeddings, vector databases, semantic retrieval, reranking, tools, or ScriptDraft knowledge injection.
 
 ## Phase 3: Minimal RAG
 

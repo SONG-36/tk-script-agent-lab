@@ -20,6 +20,14 @@ def route_after_validate_manual_insights(
     return "manual_insights_valid"
 
 
+def route_after_select_creative_knowledge(
+    state: GraphState,
+) -> Literal["knowledge_selected", "knowledge_selection_failed"]:
+    if state.get("status") == WorkflowStatus.FAILED:
+        return "knowledge_selection_failed"
+    return "knowledge_selected"
+
+
 def route_after_validate_creative_ideas(
     state: GraphState,
 ) -> Literal["creative_ideas_valid", "creative_ideas_invalid"]:

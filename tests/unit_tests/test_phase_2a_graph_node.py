@@ -96,7 +96,10 @@ def test_default_fake_mode_still_reaches_interrupt() -> None:
     result = graph.invoke(load_studio_input(), config=thread_config("phase-2a-fake"))
 
     assert result["__interrupt__"]
-    assert result["step_records"][2].executor == "FAKE_PROVIDER"
+    creative_step = next(
+        record for record in result["step_records"] if record.step_name == "generate_creative_ideas"
+    )
+    assert creative_step.executor == "FAKE_PROVIDER"
     assert result.get("model_call_records", []) == []
 
 
@@ -117,7 +120,10 @@ def test_openai_stub_mode_reaches_interrupt(monkeypatch) -> None:  # type: ignor
         "idea_openai_stub_1",
         "idea_openai_stub_2",
     ]
-    assert result["step_records"][2].executor == "MODEL"
+    creative_step = next(
+        record for record in result["step_records"] if record.step_name == "generate_creative_ideas"
+    )
+    assert creative_step.executor == "MODEL"
     assert len(result["model_call_records"]) == 1
     assert result.get("script_draft") is None
 

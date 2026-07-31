@@ -1,6 +1,6 @@
 # Runtime Configuration
 
-Phase 2B supports independent creative idea and script draft generation modes.
+Phase 3A supports independent creative idea and script draft generation modes plus optional static Creative Knowledge injection.
 
 ## Graph Configuration
 
@@ -14,6 +14,10 @@ These values are passed through LangGraph context or Studio Config.
 | `script_provider` | No | `fake` | Selects `fake` or `openai` script draft generation. |
 | `script_model` | OpenAI script mode only | `null` | OpenAI model name available for script generation. |
 | `script_prompt_version` | No | `script_draft_v1` | Prompt version used for OpenAI script draft generation. |
+| `knowledge_mode` | No | `off` | Selects no knowledge or deterministic static Creative Knowledge selection. |
+| `creative_knowledge_pack` | Static mode only | `null` | Registered Creative Knowledge Pack id, such as `tiktok_car_cleaning_v1`. |
+| `creative_knowledge_limit` | No | `6` | Maximum selected Creative Knowledge items. |
+| `knowledge_selector_version` | No | `static_selector_v1` | Deterministic selector version recorded in `KnowledgeSelectionRecord`. |
 
 `OPENAI_API_KEY` is not a graph configuration field and must not be placed in Studio Input, Graph State, logs, or exported workflow results.
 
@@ -41,6 +45,10 @@ creative_prompt_version: creative_idea_v1
 script_provider: fake
 script_model: null
 script_prompt_version: script_draft_v1
+knowledge_mode: off
+creative_knowledge_pack: null
+creative_knowledge_limit: 6
+knowledge_selector_version: static_selector_v1
 ```
 
 Shell:
@@ -74,6 +82,10 @@ creative_prompt_version: creative_idea_v1
 script_provider: openai
 script_model: <available-model-name>
 script_prompt_version: script_draft_v1
+knowledge_mode: off
+creative_knowledge_pack: null
+creative_knowledge_limit: 6
+knowledge_selector_version: static_selector_v1
 ```
 
 ## OpenAI Creative Only
@@ -104,6 +116,10 @@ creative_prompt_version: creative_idea_v1
 script_provider: fake
 script_model: null
 script_prompt_version: script_draft_v1
+knowledge_mode: off
+creative_knowledge_pack: null
+creative_knowledge_limit: 6
+knowledge_selector_version: static_selector_v1
 ```
 
 ## Full OpenAI Creative And Script
@@ -119,6 +135,10 @@ creative_prompt_version: creative_idea_v1
 script_provider: openai
 script_model: <available-model-name>
 script_prompt_version: script_draft_v1
+knowledge_mode: off
+creative_knowledge_pack: null
+creative_knowledge_limit: 6
+knowledge_selector_version: static_selector_v1
 ```
 
 Studio Input should continue to use:
@@ -141,4 +161,85 @@ The following local-only files are ignored by git:
 LOCAL_SECRETS_NOTES.md
 ```
 
-Do not create real secret files as part of Phase 2B implementation work.
+Do not create real secret files as part of Phase 3A implementation work.
+
+## Phase 3A Creative Knowledge Modes
+
+Phase 3A knowledge only affects `CreativeIdea` generation. It does not inject knowledge into `ScriptDraft`.
+
+Knowledge is creative guidance, not business evidence. Product facts, selling points, and reference insights remain the only allowed source types in `SourceUsage`.
+
+### Control
+
+Control uses `creative_idea_v2` with knowledge disabled.
+
+Studio Config:
+
+```json
+{
+  "creative_provider": "openai",
+  "creative_model": "<OPENAI_MODEL>",
+  "creative_prompt_version": "creative_idea_v2",
+  "script_provider": "fake",
+  "script_model": null,
+  "script_prompt_version": "script_draft_v1",
+  "knowledge_mode": "off",
+  "creative_knowledge_pack": null,
+  "creative_knowledge_limit": 6,
+  "knowledge_selector_version": "static_selector_v1"
+}
+```
+
+Shell:
+
+```bash
+export OPENAI_API_KEY="<your-openai-api-key>"
+export OPENAI_MODEL="<available-model-name>"
+uv run langgraph dev
+```
+
+### Treatment
+
+Treatment uses the same model and prompt version with static Creative Knowledge enabled.
+
+Studio Config:
+
+```json
+{
+  "creative_provider": "openai",
+  "creative_model": "<OPENAI_MODEL>",
+  "creative_prompt_version": "creative_idea_v2",
+  "script_provider": "fake",
+  "script_model": null,
+  "script_prompt_version": "script_draft_v1",
+  "knowledge_mode": "static",
+  "creative_knowledge_pack": "tiktok_car_cleaning_v1",
+  "creative_knowledge_limit": 6,
+  "knowledge_selector_version": "static_selector_v1"
+}
+```
+
+Shell:
+
+```bash
+export OPENAI_API_KEY="<your-openai-api-key>"
+export OPENAI_MODEL="<available-model-name>"
+uv run python scripts/run_phase_3a_creative_ab_demo.py
+```
+
+Studio Input should continue to use:
+
+```text
+data/golden_cases/car_vacuum_v1/studio_input.json
+```
+
+Expected Studio observations:
+
+- `select_creative_knowledge`;
+- `KnowledgeSelectionRecord`;
+- selected knowledge IDs in Treatment;
+- no selected knowledge IDs in Control;
+- `generate_creative_ideas`;
+- `human_select_idea` interrupt.
+
+`.env.example` is commit-safe and contains only placeholders. Do not create or commit `.env` for Phase 3A work.

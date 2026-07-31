@@ -7,6 +7,7 @@ from tk_script_agent_lab.langgraph_app.nodes import (
     generate_creative_ideas,
     generate_script,
     human_select_idea,
+    select_creative_knowledge,
     validate_creative_ideas,
     validate_input,
     validate_manual_insights,
@@ -15,6 +16,7 @@ from tk_script_agent_lab.langgraph_app.nodes import (
 from tk_script_agent_lab.langgraph_app.routing import (
     route_after_apply_human_review,
     route_after_generate_creative_ideas,
+    route_after_select_creative_knowledge,
     route_after_validate_creative_ideas,
     route_after_validate_input,
     route_after_validate_manual_insights,
@@ -35,6 +37,7 @@ def build_graph(checkpointer=None):
     )
     workflow.add_node("validate_input", validate_input)
     workflow.add_node("validate_manual_insights", validate_manual_insights)
+    workflow.add_node("select_creative_knowledge", select_creative_knowledge)
     workflow.add_node("generate_creative_ideas", generate_creative_ideas)
     workflow.add_node("validate_creative_ideas", validate_creative_ideas)
     workflow.add_node("human_select_idea", human_select_idea)
@@ -56,8 +59,16 @@ def build_graph(checkpointer=None):
         "validate_manual_insights",
         route_after_validate_manual_insights,
         {
-            "manual_insights_valid": "generate_creative_ideas",
+            "manual_insights_valid": "select_creative_knowledge",
             "manual_insights_invalid": END,
+        },
+    )
+    workflow.add_conditional_edges(
+        "select_creative_knowledge",
+        route_after_select_creative_knowledge,
+        {
+            "knowledge_selected": "generate_creative_ideas",
+            "knowledge_selection_failed": END,
         },
     )
     workflow.add_conditional_edges(
