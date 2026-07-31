@@ -125,3 +125,27 @@ Reason: knowledge can guide future retrieval and prompting, but factual business
 Decision: embedding and indexing remain separate future adapters.
 
 Reason: ingestion, indexing, retrieval, and generation have different contracts and failure modes. Keeping them separate avoids turning Phase 4A into a full RAG pipeline.
+
+## 2026-07-31: Phase 4B Uses Deterministic In-Memory Index First
+
+Decision: Phase 4B uses a deterministic in-memory index before introducing a vector store.
+
+Reason: this isolates Index and Retrieval framework behavior, keeps tests zero-cost and repeatable, and avoids mixing embedding quality problems with framework bugs.
+
+## 2026-07-31: Metadata Filtering Happens Before Exact Query Scoring
+
+Decision: metadata filtering happens before exact query scoring.
+
+Reason: this prevents cross-market, cross-category, cross-stage, or out-of-window knowledge from entering ranked candidates and keeps exclusions explainable in trace output.
+
+## 2026-07-31: No-Match Differs From Empty Index
+
+Decision: no-match is a valid retrieval result, while an empty index is an error.
+
+Reason: no-match means the system searched prepared knowledge and found nothing relevant; empty index means the retrieval system is not prepared.
+
+## 2026-07-31: Retrieval Eval Checks IDs, Not Business Quality
+
+Decision: Retrieval Eval validates expected and forbidden IDs, not creative business quality.
+
+Reason: retrieval correctness and generation quality are different problems. Business quality remains a later human or product eval concern.

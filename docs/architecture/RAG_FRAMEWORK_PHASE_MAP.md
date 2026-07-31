@@ -1,7 +1,7 @@
 # RAG Framework Phase Map
 
 This map separates the RAG framework pieces that already exist from future
-work. Phase 4A is not complete RAG.
+work. Phase 4B is still not vector RAG.
 
 ## Current Baseline
 
@@ -22,25 +22,31 @@ Phase 4A completed:
 - `DeterministicParagraphChunker`;
 - `DeterministicKnowledgeIngestor`.
 
-The current implemented chain is only:
+Phase 4B completed:
+
+- `KnowledgeIndex` Port;
+- `InMemoryKnowledgeIndex`;
+- exact / metadata retrieval;
+- deterministic ranking;
+- Retrieval Eval;
+- no Embedding.
+
+The current implemented chain is:
 
 ```text
 KnowledgeDocument
 -> KnowledgeChunk
 -> IngestionResult
+-> InMemoryKnowledgeIndex
+-> ExactMetadataKnowledgeRetriever
+-> RetrievalResult
+-> Deterministic Retrieval Eval
 ```
 
 Ingestion and Retrieval are different Ports. Ingestion prepares standardized
 chunks. Retrieval later chooses relevant knowledge for a task.
 
 ## Future Phases
-
-Phase 4B, not implemented:
-
-- In-Memory Index;
-- exact / metadata retrieval;
-- Retrieval Eval;
-- no Embedding.
 
 Phase 4C, not implemented:
 

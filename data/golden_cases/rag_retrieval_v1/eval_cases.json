@@ -1,0 +1,58 @@
+[
+  {
+    "case_id": "us_car_creative_cup_holder",
+    "request": {
+      "stage": "creative",
+      "target_market": "US",
+      "product_category": "car vacuum cleaner",
+      "query": "cup holder crumbs",
+      "limit": 3,
+      "filters": {
+        "effective_on": "2026-07-31",
+        "topic": "car_cleanup"
+      }
+    },
+    "expected_document_ids": ["doc_us_car_creative_current"],
+    "forbidden_document_ids": [
+      "doc_us_hair_creative_current",
+      "doc_us_car_creative_expired",
+      "doc_jp_car_creative_current"
+    ],
+    "minimum_recall": 1.0,
+    "expected_top_document_id": "doc_us_car_creative_current"
+  },
+  {
+    "case_id": "us_car_script_scene_timing",
+    "request": {
+      "stage": "script",
+      "target_market": "US",
+      "product_category": "car vacuum cleaner",
+      "query": "script scene timing",
+      "limit": 2,
+      "filters": {
+        "effective_on": "2026-07-31"
+      }
+    },
+    "expected_document_ids": ["doc_us_car_script_current"],
+    "forbidden_document_ids": ["doc_us_car_creative_current"],
+    "minimum_recall": 1.0,
+    "expected_top_document_id": "doc_us_car_script_current"
+  },
+  {
+    "case_id": "jp_car_creative_seat_seam",
+    "request": {
+      "stage": "creative",
+      "target_market": "JP",
+      "product_category": "car vacuum cleaner",
+      "query": "seat seam debris",
+      "limit": 2,
+      "filters": {
+        "effective_on": "2026-07-31"
+      }
+    },
+    "expected_document_ids": ["doc_jp_car_creative_current"],
+    "forbidden_document_ids": ["doc_us_car_creative_current"],
+    "minimum_recall": 1.0,
+    "expected_top_document_id": "doc_jp_car_creative_current"
+  }
+]

@@ -19,6 +19,9 @@ Technology should be added only when it serves the current phase.
 | Tokenizer | No | Later | Not used in Phase 4A |
 | Embedding | No | Later | Not used in Phase 4A |
 | Vector database | No | Later | Not used in Phase 4A |
+| InMemoryKnowledgeIndex | Yes | Yes | Phase 4B |
+| ExactMetadataKnowledgeRetriever | Yes | Yes | Phase 4B |
+| RetrievalEvaluator | Yes | Yes | Phase 4B |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -111,3 +114,19 @@ Provenance records where knowledge came from and what evidence status it has. It
 Stable hashing is used for deterministic chunk and ingestion request IDs. Phase 4A does not use random UUIDs or current time for these IDs.
 
 Phase 4A has no model calls. It does not use a tokenizer, embedding model, vector database, semantic retrieval, or model-based chunking.
+
+## Phase 4B Exact Retrieval Boundary
+
+`InMemoryKnowledgeIndex` is introduced as a zero-cost, process-local index for
+`KnowledgeChunk` snapshots. It proves build, duplicate handling, snapshot, and
+retrieval contracts before any vector store exists.
+
+`ExactMetadataKnowledgeRetriever` implements deterministic metadata filtering
+and exact query matching. Metadata filters run before scoring so wrong stage,
+market, category, or date-window chunks cannot become candidates.
+
+`RetrievalEvaluator` checks expected IDs, forbidden IDs, recall, and top ID. It
+does not judge creative quality or use an LLM judge.
+
+Phase 4B has no model calls. It does not use embeddings, a vector database,
+semantic retrieval, reranking, query rewriting, or prompt injection.

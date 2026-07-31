@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 4A implementation scope. Phase 4A is implemented and pending commit after tests, import checks, compile checks, demo checks, and validation commands pass.
+Current status: Phase 4B implementation scope. Phase 4B is implemented and pending commit after tests, import checks, compile checks, demo checks, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -105,12 +105,15 @@ Phase 4A is not complete RAG. It does not add embeddings, vector databases, sema
 
 ## Phase 4B: In-Memory Index And Retrieval Eval
 
-Future scope:
+Implemented / pending commit:
 
 - In-Memory Index;
 - exact and metadata retrieval;
 - Retrieval Eval;
 - no Embedding.
+
+Phase 4B connects `IngestionResult.chunks` to `KnowledgeRetriever` through a
+pure in-memory index. It remains offline and does not add vector search.
 
 ## Phase 4C: Embedding And Vector Store
 

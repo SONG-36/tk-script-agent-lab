@@ -101,16 +101,18 @@ A future vector adapter should implement `KnowledgeRetriever`. It may add embedd
 
 ## Ingestion Relationship
 
-Phase 4A introduces ingestion-side contracts without changing this retrieval contract:
+Phase 4A introduces ingestion-side contracts and Phase 4B connects them to this retrieval contract through an in-memory index:
 
 ```text
 IngestionResult.chunks
-    -> future Index Adapter
+    -> InMemoryKnowledgeIndex
     -> KnowledgeRetriever
     -> RetrievalResult
 ```
 
 Chunks remain knowledge guidance. They do not become business evidence and they must not appear as `CreativeIdea.SourceUsage`.
+
+Phase 4B exact retrieval remains deterministic and offline. It does not add embeddings, vector search, semantic retrieval, reranking, or prompt injection.
 
 ## JSON Example
 

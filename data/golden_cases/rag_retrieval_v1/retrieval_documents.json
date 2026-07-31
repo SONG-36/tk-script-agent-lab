@@ -1,0 +1,127 @@
+[
+  {
+    "document_id": "doc_us_car_creative_current",
+    "title": "Cup holder crumbs creative cleanup note",
+    "content": "Open with cup holder crumbs, then show seat seam debris and floor mat dust as separate visible mess moments. Keep the car parked and avoid unsupported performance claims.",
+    "source": {
+      "source_id": "src_us_car_creative_current",
+      "source_type": "manual_entry",
+      "source_reference": "rag_retrieval_v1.synthetic.us_car_creative",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "internal_working_rule",
+    "evidence_status": "hypothesis",
+    "target_markets": ["US"],
+    "product_categories": ["car vacuum cleaner"],
+    "task_stages": ["creative"],
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "metadata": {
+      "kind": "creative_note",
+      "topic": "car_cleanup"
+    }
+  },
+  {
+    "document_id": "doc_us_car_script_current",
+    "title": "Script scene timing for car cleanup",
+    "content": "Use script scene timing to show the mess, cleanup pass, and result in three short beats. Mention floor mat dust only as a visible scene detail.",
+    "source": {
+      "source_id": "src_us_car_script_current",
+      "source_type": "manual_entry",
+      "source_reference": "rag_retrieval_v1.synthetic.us_car_script",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "internal_working_rule",
+    "evidence_status": "hypothesis",
+    "target_markets": ["US"],
+    "product_categories": ["car vacuum cleaner"],
+    "task_stages": ["script"],
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "metadata": {
+      "kind": "script_note",
+      "topic": "car_cleanup"
+    }
+  },
+  {
+    "document_id": "doc_jp_car_creative_current",
+    "title": "JP seat seam debris creative note",
+    "content": "For JP creative testing, frame seat seam debris as a small everyday cleaning moment. Do not reuse US-only copy assumptions.",
+    "source": {
+      "source_id": "src_jp_car_creative_current",
+      "source_type": "manual_entry",
+      "source_reference": "rag_retrieval_v1.synthetic.jp_car_creative",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "experiment_observation",
+    "evidence_status": "observed",
+    "target_markets": ["JP"],
+    "product_categories": ["car vacuum cleaner"],
+    "task_stages": ["creative"],
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "metadata": {
+      "kind": "creative_note",
+      "topic": "car_cleanup"
+    }
+  },
+  {
+    "document_id": "doc_us_hair_creative_current",
+    "title": "Hair styling creative note",
+    "content": "Hair styling examples should focus on visible before and after styling control, not cup holder crumbs or car interior cleanup.",
+    "source": {
+      "source_id": "src_us_hair_creative_current",
+      "source_type": "manual_entry",
+      "source_reference": "rag_retrieval_v1.synthetic.us_hair_creative",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "internal_working_rule",
+    "evidence_status": "hypothesis",
+    "target_markets": ["US"],
+    "product_categories": ["hair care"],
+    "task_stages": ["creative"],
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "metadata": {
+      "kind": "creative_note",
+      "topic": "hair_styling"
+    }
+  },
+  {
+    "document_id": "doc_us_car_creative_expired",
+    "title": "Expired cleanup note",
+    "content": "This expired cleanup note mentions cup holder crumbs but should be excluded after its effective window.",
+    "source": {
+      "source_id": "src_us_car_creative_expired",
+      "source_type": "manual_entry",
+      "source_reference": "rag_retrieval_v1.synthetic.us_car_expired",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "internal_working_rule",
+    "evidence_status": "hypothesis",
+    "target_markets": ["US"],
+    "product_categories": ["car vacuum cleaner"],
+    "task_stages": ["creative"],
+    "effective_from": "2025-01-01",
+    "effective_to": "2025-12-31",
+    "metadata": {
+      "kind": "creative_note",
+      "topic": "car_cleanup"
+    }
+  }
+]

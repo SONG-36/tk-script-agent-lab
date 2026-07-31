@@ -57,6 +57,9 @@ def test_knowledge_contracts_have_no_runtime_adapter_imports() -> None:
             SRC_ROOT / "knowledge" / "ingestion_contracts.py": imports_for(
                 SRC_ROOT / "knowledge" / "ingestion_contracts.py"
             ),
+            SRC_ROOT / "knowledge" / "index_contracts.py": imports_for(
+                SRC_ROOT / "knowledge" / "index_contracts.py"
+            ),
         },
         (
             "langgraph",
@@ -65,8 +68,59 @@ def test_knowledge_contracts_have_no_runtime_adapter_imports() -> None:
             "yaml",
             "tk_script_agent_lab.prompts",
             "scripts",
+            "tests",
         ),
     )
+
+
+def test_phase_4b_modules_do_not_import_runtime_or_vector_dependencies() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "knowledge" / "in_memory_index.py": imports_for(
+                SRC_ROOT / "knowledge" / "in_memory_index.py"
+            ),
+            SRC_ROOT / "knowledge" / "exact_retriever.py": imports_for(
+                SRC_ROOT / "knowledge" / "exact_retriever.py"
+            ),
+            SRC_ROOT / "knowledge" / "retrieval_eval.py": imports_for(
+                SRC_ROOT / "knowledge" / "retrieval_eval.py"
+            ),
+        },
+        (
+            "langgraph",
+            "langchain_openai",
+            "openai",
+            "faiss",
+            "chromadb",
+            "qdrant",
+            "pinecone",
+            "pymilvus",
+            "tk_script_agent_lab.prompts",
+            "tk_script_agent_lab.providers",
+            "scripts",
+        ),
+    )
+
+
+def test_langgraph_app_does_not_depend_on_phase_4b_index_or_eval() -> None:
+    assert_no_imports(
+        package_imports("langgraph_app"),
+        (
+            "tk_script_agent_lab.knowledge.index_contracts",
+            "tk_script_agent_lab.knowledge.in_memory_index",
+            "tk_script_agent_lab.knowledge.exact_retriever",
+            "tk_script_agent_lab.knowledge.retrieval_eval",
+        ),
+    )
+
+
+def test_src_does_not_read_phase_4b_fixture_files() -> None:
+    violations = [
+        str(path)
+        for path in SRC_ROOT.rglob("*.py")
+        if "rag_retrieval_v1" in path.read_text(encoding="utf-8")
+    ]
+    assert violations == []
 
 
 def test_providers_do_not_import_graph_scripts_or_tests() -> None:

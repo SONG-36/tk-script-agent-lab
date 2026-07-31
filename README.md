@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 4A.
+Current status: Phase 4B.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -21,6 +21,8 @@ Phase 2B adds an optional real OpenAI provider for `ScriptDraft` generation afte
 Phase 3A adds static Creative Knowledge Pack injection and Control / Treatment A/B comparison for creative idea generation.
 
 Phase 4A adds offline RAG ingestion contracts and deterministic chunking. It prepares local knowledge documents for future indexing, but it does not connect RAG to LangGraph, prompts, embeddings, vector databases, or semantic retrieval.
+
+Phase 4B adds a pure in-memory index, exact metadata retrieval, deterministic ranking, and retrieval eval. It remains offline and does not add embeddings, a vector database, semantic retrieval, or LangGraph retrieval nodes.
 
 There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
@@ -317,6 +319,47 @@ uv run python scripts/run_phase_4a_ingestion_demo.py --help
 uv run python scripts/run_phase_4a_ingestion_demo.py \
   --max-chars 500 \
   --overlap-chars 80
+```
+
+## Phase 4B Capability
+
+Phase 4B can:
+
+- build an `InMemoryKnowledgeIndex` from Phase 4A `KnowledgeChunk` values;
+- reject duplicate chunk IDs with atomic build semantics;
+- retrieve chunks with deterministic stage, market, category, date, and metadata filters;
+- score exact phrase and all-term query matches with a fixed ranking rule;
+- map selected chunks to `RetrievedKnowledge` while preserving provenance and evidence status;
+- record candidate, exclusion, selected, filter, and ranking details in `RetrievalTrace`;
+- run deterministic Retrieval Eval over expected and forbidden IDs.
+
+Phase 4B is not vector RAG. It does not implement embeddings, vector databases, semantic retrieval, reranking, Creative RAG, Script RAG, or LangGraph retrieval nodes.
+
+Phase 4B documentation:
+
+- [docs/contracts/RAG_INDEX_CONTRACT_V1.md](docs/contracts/RAG_INDEX_CONTRACT_V1.md)
+- [docs/evals/RAG_RETRIEVAL_EVAL_V1.md](docs/evals/RAG_RETRIEVAL_EVAL_V1.md)
+- [docs/working/PHASE_4B_RETRIEVAL_REPORT.md](docs/working/PHASE_4B_RETRIEVAL_REPORT.md)
+- [docs/architecture/RAG_FRAMEWORK_PHASE_MAP.md](docs/architecture/RAG_FRAMEWORK_PHASE_MAP.md)
+
+Phase 4B retrieval demo:
+
+```bash
+uv run python scripts/run_phase_4b_retrieval_demo.py --help
+```
+
+```bash
+uv run python scripts/run_phase_4b_retrieval_demo.py \
+  --query "cup holder crumbs" \
+  --target-market "US" \
+  --product-category "car vacuum cleaner" \
+  --stage creative \
+  --limit 3 \
+  --effective-on 2026-07-31
+```
+
+```bash
+uv run python scripts/run_phase_4b_retrieval_demo.py --run-eval
 ```
 
 ## Running Tests
