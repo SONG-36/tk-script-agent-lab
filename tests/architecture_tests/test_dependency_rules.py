@@ -50,7 +50,14 @@ def test_domain_has_no_framework_or_adapter_imports() -> None:
 
 def test_knowledge_contracts_have_no_runtime_adapter_imports() -> None:
     assert_no_imports(
-        {SRC_ROOT / "knowledge" / "contracts.py": imports_for(SRC_ROOT / "knowledge" / "contracts.py")},
+        {
+            SRC_ROOT / "knowledge" / "contracts.py": imports_for(
+                SRC_ROOT / "knowledge" / "contracts.py"
+            ),
+            SRC_ROOT / "knowledge" / "ingestion_contracts.py": imports_for(
+                SRC_ROOT / "knowledge" / "ingestion_contracts.py"
+            ),
+        },
         (
             "langgraph",
             "langchain_openai",

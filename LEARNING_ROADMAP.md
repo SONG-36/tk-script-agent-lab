@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 3A implementation scope. Phase 3A is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
+Current status: Phase 4A implementation scope. Phase 4A is implemented and pending commit after tests, import checks, compile checks, demo checks, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -76,6 +76,65 @@ Current scope:
 - compare Control and Treatment runs without declaring an automatic winner.
 
 Phase 3A is not vector RAG. It does not add embeddings, vector databases, semantic retrieval, reranking, tools, or ScriptDraft knowledge injection.
+
+## Phase 3B: Framework Consolidation And Retrieval Contracts
+
+Completed scope:
+
+- Framework Baseline V1;
+- Retrieval Contracts V1;
+- `KnowledgeRetriever` Port;
+- `StaticKnowledgeRetriever`;
+- dependency direction tests.
+
+## Phase 4A: RAG Ingestion Contracts And Deterministic Chunking
+
+Implemented / pending commit:
+
+- RAG Ingestion Contracts;
+- `KnowledgeDocument`;
+- `KnowledgeChunk`;
+- `ChunkingStrategy`;
+- `KnowledgeIngestor`;
+- deterministic chunking;
+- stable chunk IDs;
+- provenance preservation;
+- offline ingestion demo.
+
+Phase 4A is not complete RAG. It does not add embeddings, vector databases, semantic retrieval, reranking, Creative RAG, or Script RAG.
+
+## Phase 4B: In-Memory Index And Retrieval Eval
+
+Future scope:
+
+- In-Memory Index;
+- exact and metadata retrieval;
+- Retrieval Eval;
+- no Embedding.
+
+## Phase 4C: Embedding And Vector Store
+
+Future scope:
+
+- one real Embedding adapter;
+- one real Vector Store adapter;
+- `VectorKnowledgeRetriever`.
+
+## Phase 4D: Creative RAG
+
+Future scope:
+
+- connect retrieval to Creative LangGraph path;
+- inject retrieved knowledge into the Creative Prompt;
+- keep Retrieval Trace observable.
+
+## Phase 4E: Script RAG
+
+Future scope:
+
+- Script Knowledge;
+- Script RAG connection to LangGraph;
+- Script Retrieval Eval.
 
 ## Phase 3: Minimal RAG
 

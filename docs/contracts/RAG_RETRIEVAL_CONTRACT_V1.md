@@ -99,6 +99,19 @@ No async, batch, streaming, reranking, upsert, delete, index rebuild, or health-
 
 A future vector adapter should implement `KnowledgeRetriever`. It may add embeddings and vector search internally in a later phase, but it must still return `RetrievalResult` and keep knowledge separate from business evidence.
 
+## Ingestion Relationship
+
+Phase 4A introduces ingestion-side contracts without changing this retrieval contract:
+
+```text
+IngestionResult.chunks
+    -> future Index Adapter
+    -> KnowledgeRetriever
+    -> RetrievalResult
+```
+
+Chunks remain knowledge guidance. They do not become business evidence and they must not appear as `CreativeIdea.SourceUsage`.
+
 ## JSON Example
 
 ```json

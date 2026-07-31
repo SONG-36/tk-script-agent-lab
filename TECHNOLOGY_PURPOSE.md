@@ -12,6 +12,13 @@ Technology should be added only when it serves the current phase.
 | YAML | Yes | Yes | Phase 3A |
 | Static Selector | Yes | Yes | Phase 3A |
 | A/B Rubric | Yes | Yes | Phase 3A |
+| DeterministicParagraphChunker | Yes | Yes | Phase 4A |
+| KnowledgeIngestor | Yes | Yes | Phase 4A |
+| Provenance | Yes | Yes | Phase 4A |
+| Stable hashing | Yes | Yes | Phase 4A |
+| Tokenizer | No | Later | Not used in Phase 4A |
+| Embedding | No | Later | Not used in Phase 4A |
+| Vector database | No | Later | Not used in Phase 4A |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -90,3 +97,17 @@ OpenAI creative generation can read selected knowledge in `creative_idea_v2`, bu
 The A/B Rubric supports human review of Control and Treatment outputs. One run is not proof of long-term improvement.
 
 There is still no embedding, vector store, top-k retrieval, reranker, retrieval service, ScriptDraft knowledge injection, or RAG pipeline in Phase 3A.
+
+## Phase 4A RAG Ingestion Boundary
+
+Pydantic is used for ingestion contracts and validation: `DocumentSource`, `KnowledgeDocument`, `KnowledgeChunk`, `ChunkingRequest`, `IngestionRequest`, `IngestionTrace`, and `IngestionResult`.
+
+`DeterministicParagraphChunker` provides a reproducible chunking baseline before any token-aware or semantic chunking exists.
+
+`KnowledgeIngestor` prepares local knowledge offline. It receives already constructed documents, calls a chunker, preserves provenance and evidence status, and returns structured ingestion traces and errors.
+
+Provenance records where knowledge came from and what evidence status it has. It does not make knowledge a `ProductFact` or `SourceUsage`.
+
+Stable hashing is used for deterministic chunk and ingestion request IDs. Phase 4A does not use random UUIDs or current time for these IDs.
+
+Phase 4A has no model calls. It does not use a tokenizer, embedding model, vector database, semantic retrieval, or model-based chunking.

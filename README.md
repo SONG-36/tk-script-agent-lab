@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 3A.
+Current status: Phase 4A.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -19,6 +19,8 @@ Phase 2A adds an optional real OpenAI provider for `CreativeIdea` generation onl
 Phase 2B adds an optional real OpenAI provider for `ScriptDraft` generation after a human approves a creative idea.
 
 Phase 3A adds static Creative Knowledge Pack injection and Control / Treatment A/B comparison for creative idea generation.
+
+Phase 4A adds offline RAG ingestion contracts and deterministic chunking. It prepares local knowledge documents for future indexing, but it does not connect RAG to LangGraph, prompts, embeddings, vector databases, or semantic retrieval.
 
 There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
@@ -284,6 +286,38 @@ uv run python scripts/run_phase_3a_creative_ab_demo.py \
 ```
 
 `control` calls OpenAI once. `treatment` calls OpenAI once. `both` calls OpenAI twice. If `--confirm-live` is not provided, the demo refuses to execute real calls. The A/B demo does not automatically announce a winner; use [docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md](docs/evals/PHASE_3A_CREATIVE_AB_RUBRIC.md) for human review.
+
+## Phase 4A Capability
+
+Phase 4A can:
+
+- represent ingestion input as `KnowledgeDocument`;
+- preserve source provenance and evidence status;
+- normalize knowledge text with deterministic rules;
+- split text into `KnowledgeChunk` values with stable `chunk_id` values;
+- run `DeterministicParagraphChunker` without a model, tokenizer, or network;
+- run `DeterministicKnowledgeIngestor` to produce `IngestionResult`;
+- run a local offline demo over a synthetic car-cleaning internal knowledge fixture.
+
+Phase 4A is not connected to LangGraph, Creative Prompt injection, Script Prompt injection, embeddings, vector databases, semantic retrieval, top-k retrieval, or reranking.
+
+Phase 4A documentation:
+
+- [docs/contracts/RAG_INGESTION_CONTRACT_V1.md](docs/contracts/RAG_INGESTION_CONTRACT_V1.md)
+- [docs/architecture/RAG_FRAMEWORK_PHASE_MAP.md](docs/architecture/RAG_FRAMEWORK_PHASE_MAP.md)
+- [docs/working/PHASE_4A_INGESTION_REPORT.md](docs/working/PHASE_4A_INGESTION_REPORT.md)
+
+Phase 4A ingestion demo:
+
+```bash
+uv run python scripts/run_phase_4a_ingestion_demo.py --help
+```
+
+```bash
+uv run python scripts/run_phase_4a_ingestion_demo.py \
+  --max-chars 500 \
+  --overlap-chars 80
+```
 
 ## Running Tests
 

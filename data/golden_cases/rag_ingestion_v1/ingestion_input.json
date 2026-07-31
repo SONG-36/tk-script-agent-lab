@@ -1,0 +1,33 @@
+{
+  "content_file": "source_document.md",
+  "document": {
+    "document_id": "doc_car_cleanup_internal_notes_v1",
+    "title": "Car Interior Cleanup Creative Notes",
+    "source": {
+      "source_id": "src_internal_car_cleanup_notes_v1",
+      "source_type": "internal_file",
+      "source_reference": "source_document.md",
+      "publisher": null,
+      "retrieved_at": null
+    },
+    "version": "v1",
+    "language": "en",
+    "provenance_type": "internal_working_rule",
+    "evidence_status": "hypothesis",
+    "target_markets": ["US"],
+    "product_categories": ["car vacuum cleaner"],
+    "task_stages": ["creative"],
+    "effective_from": null,
+    "effective_to": null,
+    "metadata": {
+      "fixture": "rag_ingestion_v1",
+      "purpose": "deterministic chunking baseline"
+    }
+  },
+  "ingestion": {
+    "max_chars": 360,
+    "overlap_chars": 40,
+    "chunker_version": "deterministic_paragraph_v1",
+    "ingestor_version": "deterministic_ingestor_v1"
+  }
+}

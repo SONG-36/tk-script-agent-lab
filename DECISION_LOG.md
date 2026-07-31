@@ -101,3 +101,27 @@ Reason: retrieval must be observable and replaceable. Static and future vector r
 Decision: static knowledge remains a supported retriever implementation even after vector retrieval is introduced later.
 
 Reason: static retrieval is zero-cost, deterministic, useful for regression tests, and appropriate for small curated knowledge sets.
+
+## 2026-07-31: RAG Ingestion Is Offline In Phase 4A
+
+Decision: RAG ingestion is an offline framework capability and is not a LangGraph runtime node in Phase 4A.
+
+Reason: ingestion prepares knowledge for future indexing. Keeping it outside Graph prevents runtime orchestration, prompts, and provider behavior from changing before retrieval is ready.
+
+## 2026-07-31: Deterministic Chunking Is The Baseline
+
+Decision: deterministic paragraph and character chunking is the baseline before token-aware or semantic chunking.
+
+Reason: stable chunking makes offsets, chunk IDs, and regression tests reproducible before adding tokenizer, embedding, or semantic behavior.
+
+## 2026-07-31: Chunks Preserve Provenance Without Becoming Facts
+
+Decision: `KnowledgeDocument` and `KnowledgeChunk` preserve provenance and evidence status but do not automatically become `ProductFact`.
+
+Reason: knowledge can guide future retrieval and prompting, but factual business claims still require explicit product facts, selling points, or reference insights.
+
+## 2026-07-31: Embedding And Indexing Stay Future Adapters
+
+Decision: embedding and indexing remain separate future adapters.
+
+Reason: ingestion, indexing, retrieval, and generation have different contracts and failure modes. Keeping them separate avoids turning Phase 4A into a full RAG pipeline.
