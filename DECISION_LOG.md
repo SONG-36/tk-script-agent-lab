@@ -149,3 +149,33 @@ Reason: no-match means the system searched prepared knowledge and found nothing 
 Decision: Retrieval Eval validates expected and forbidden IDs, not creative business quality.
 
 Reason: retrieval correctness and generation quality are different problems. Business quality remains a later human or product eval concern.
+
+## 2026-07-31: Phase 4C Uses One Embedding Adapter And One Vector Store
+
+Decision: Phase 4C uses one Embedding Adapter and one Vector Store Adapter.
+
+Reason: this validates real interfaces while avoiding multi-backend abstraction and controlling change radius.
+
+## 2026-07-31: OpenAIEmbeddingProvider Only Converts Text To Vectors
+
+Decision: `OpenAIEmbeddingProvider` only converts text to vectors.
+
+Reason: it should not own retrieval, prompts, Graph routing, or generation, which keeps it easy to replace.
+
+## 2026-07-31: Qdrant Local Is In-Memory Only
+
+Decision: Qdrant Local is used without persistence in Phase 4C.
+
+Reason: this verifies vector store semantics without introducing deployment, operations, or database files.
+
+## 2026-07-31: Vector Retriever Returns RetrievalResult V1
+
+Decision: `VectorKnowledgeRetriever` continues to return `RetrievalResult` V1.
+
+Reason: LangGraph and future Prompt Grounding should not depend on a specific vector store.
+
+## 2026-07-31: Exact Retrieval Remains Supported
+
+Decision: `ExactMetadataKnowledgeRetriever` remains supported after vector retrieval exists.
+
+Reason: it provides zero-cost regression, precise filtering, and a stable comparison baseline.

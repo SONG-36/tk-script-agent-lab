@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 4B implementation scope. Phase 4B is implemented and pending commit after tests, import checks, compile checks, demo checks, and validation commands pass.
+Current status: Phase 4C implementation scope. Phase 4C is implemented and pending live validation if OpenAI embedding credentials are absent.
 
 ## Phase 0: Project Baseline
 
@@ -117,11 +117,13 @@ pure in-memory index. It remains offline and does not add vector search.
 
 ## Phase 4C: Embedding And Vector Store
 
-Future scope:
+Implemented / pending live validation:
 
-- one real Embedding adapter;
-- one real Vector Store adapter;
+- one real OpenAI Embedding adapter;
+- one real Qdrant Local/In-Memory Vector Store adapter;
 - `VectorKnowledgeRetriever`.
+
+Phase 4C does not connect retrieval to LangGraph or prompts.
 
 ## Phase 4D: Creative RAG
 

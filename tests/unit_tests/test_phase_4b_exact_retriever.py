@@ -84,6 +84,13 @@ def test_missing_effective_on_skips_date_filter() -> None:
     assert result.trace.filters_applied["effective_on"] == ""
 
 
+def test_exact_retriever_trace_keeps_exact_ranking_labels() -> None:
+    result = retrieve([chunk()])
+
+    assert result.trace.filters_applied["query_match_mode"] == "exact_all_terms_or_phrase"
+    assert result.trace.filters_applied["ranking_version"] == "exact_rank_v1"
+
+
 def test_exact_query_phrase_terms_casefold_nfkc_whitespace_ranking_limit() -> None:
     chunks = [
         chunk("kc_title", title="ＣＵＰ holder crumbs", content="plain content", document_id="doc_a"),

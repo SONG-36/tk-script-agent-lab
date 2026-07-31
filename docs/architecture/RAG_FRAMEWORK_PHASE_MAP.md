@@ -1,7 +1,7 @@
 # RAG Framework Phase Map
 
 This map separates the RAG framework pieces that already exist from future
-work. Phase 4B is still not vector RAG.
+work. Phase 4C adds vector retrieval adapters but is still not Creative or Script RAG.
 
 ## Current Baseline
 
@@ -31,6 +31,15 @@ Phase 4B completed:
 - Retrieval Eval;
 - no Embedding.
 
+Phase 4C completed:
+
+- `EmbeddingProvider` Port;
+- `OpenAIEmbeddingProvider`;
+- `VectorStore` Port;
+- `QdrantLocalVectorStore`;
+- `VectorKnowledgeRetriever`;
+- Retrieval Eval reuse.
+
 The current implemented chain is:
 
 ```text
@@ -43,16 +52,20 @@ KnowledgeDocument
 -> Deterministic Retrieval Eval
 ```
 
+The Phase 4C vector chain is:
+
+```text
+KnowledgeChunk
+-> OpenAIEmbeddingProvider
+-> QdrantLocalVectorStore
+-> VectorKnowledgeRetriever
+-> RetrievalResult
+```
+
 Ingestion and Retrieval are different Ports. Ingestion prepares standardized
 chunks. Retrieval later chooses relevant knowledge for a task.
 
 ## Future Phases
-
-Phase 4C, not implemented:
-
-- one real Embedding Adapter;
-- one real Vector Store Adapter;
-- `VectorKnowledgeRetriever`.
 
 Phase 4D, not implemented:
 

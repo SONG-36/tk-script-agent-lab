@@ -22,6 +22,9 @@ Technology should be added only when it serves the current phase.
 | InMemoryKnowledgeIndex | Yes | Yes | Phase 4B |
 | ExactMetadataKnowledgeRetriever | Yes | Yes | Phase 4B |
 | RetrievalEvaluator | Yes | Yes | Phase 4B |
+| OpenAI Embeddings | Yes | Yes | Phase 4C |
+| Qdrant Local | Yes | Yes | Phase 4C |
+| VectorKnowledgeRetriever | Yes | Yes | Phase 4C |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -130,3 +133,19 @@ does not judge creative quality or use an LLM judge.
 
 Phase 4B has no model calls. It does not use embeddings, a vector database,
 semantic retrieval, reranking, query rewriting, or prompt injection.
+
+## Phase 4C Vector Retrieval Boundary
+
+OpenAI Embeddings are introduced only for text-to-vector conversion. The
+embedding provider does not retrieve knowledge, write prompts, call LangGraph,
+or make creative/script decisions.
+
+Qdrant Local is introduced in in-memory mode only. It verifies real vector store
+semantics without Docker, remote Qdrant, persistence, or database operations.
+
+`VectorKnowledgeRetriever` converts a `RetrievalRequest` into one query
+embedding call, delegates vector search to Qdrant, resolves chunk citations, and
+returns `RetrievalResult` V1.
+
+Phase 4C does not use Chat Completions, rerankers, hybrid search, query rewrite,
+Prompt Grounding, or LangGraph retrieval nodes.

@@ -60,6 +60,12 @@ def test_knowledge_contracts_have_no_runtime_adapter_imports() -> None:
             SRC_ROOT / "knowledge" / "index_contracts.py": imports_for(
                 SRC_ROOT / "knowledge" / "index_contracts.py"
             ),
+            SRC_ROOT / "knowledge" / "embedding_contracts.py": imports_for(
+                SRC_ROOT / "knowledge" / "embedding_contracts.py"
+            ),
+            SRC_ROOT / "knowledge" / "vector_store_contracts.py": imports_for(
+                SRC_ROOT / "knowledge" / "vector_store_contracts.py"
+            ),
         },
         (
             "langgraph",
@@ -69,6 +75,28 @@ def test_knowledge_contracts_have_no_runtime_adapter_imports() -> None:
             "tk_script_agent_lab.prompts",
             "scripts",
             "tests",
+        ),
+    )
+
+
+def test_phase_4c_adapters_do_not_import_graph_prompts_or_providers() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "knowledge" / "openai_embedding.py": imports_for(
+                SRC_ROOT / "knowledge" / "openai_embedding.py"
+            ),
+            SRC_ROOT / "knowledge" / "qdrant_vector_store.py": imports_for(
+                SRC_ROOT / "knowledge" / "qdrant_vector_store.py"
+            ),
+            SRC_ROOT / "knowledge" / "vector_retriever.py": imports_for(
+                SRC_ROOT / "knowledge" / "vector_retriever.py"
+            ),
+        },
+        (
+            "langgraph",
+            "tk_script_agent_lab.prompts",
+            "tk_script_agent_lab.providers",
+            "scripts",
         ),
     )
 
@@ -110,6 +138,11 @@ def test_langgraph_app_does_not_depend_on_phase_4b_index_or_eval() -> None:
             "tk_script_agent_lab.knowledge.in_memory_index",
             "tk_script_agent_lab.knowledge.exact_retriever",
             "tk_script_agent_lab.knowledge.retrieval_eval",
+            "tk_script_agent_lab.knowledge.embedding_contracts",
+            "tk_script_agent_lab.knowledge.openai_embedding",
+            "tk_script_agent_lab.knowledge.vector_store_contracts",
+            "tk_script_agent_lab.knowledge.qdrant_vector_store",
+            "tk_script_agent_lab.knowledge.vector_retriever",
         ),
     )
 

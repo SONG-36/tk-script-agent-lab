@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 4B.
+Current status: Phase 4C.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -23,6 +23,8 @@ Phase 3A adds static Creative Knowledge Pack injection and Control / Treatment A
 Phase 4A adds offline RAG ingestion contracts and deterministic chunking. It prepares local knowledge documents for future indexing, but it does not connect RAG to LangGraph, prompts, embeddings, vector databases, or semantic retrieval.
 
 Phase 4B adds a pure in-memory index, exact metadata retrieval, deterministic ranking, and retrieval eval. It remains offline and does not add embeddings, a vector database, semantic retrieval, or LangGraph retrieval nodes.
+
+Phase 4C adds a real OpenAI Embedding adapter, Qdrant Local/In-Memory vector store adapter, and `VectorKnowledgeRetriever`. It still does not connect retrieval to LangGraph, Creative Prompt, or Script Prompt.
 
 There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
@@ -360,6 +362,46 @@ uv run python scripts/run_phase_4b_retrieval_demo.py \
 
 ```bash
 uv run python scripts/run_phase_4b_retrieval_demo.py --run-eval
+```
+
+## Phase 4C Capability
+
+Phase 4C can:
+
+- convert `KnowledgeChunk` text into vectors through `OpenAIEmbeddingProvider`;
+- build a local in-memory Qdrant collection with `QdrantLocalVectorStore`;
+- run vector similarity retrieval through `VectorKnowledgeRetriever`;
+- preserve metadata filtering before vector ranking;
+- return standard `RetrievalResult` and `RetrievedKnowledge`;
+- reuse Phase 4B `RetrievalEvaluator`;
+- keep `ExactMetadataKnowledgeRetriever` as the zero-cost deterministic baseline.
+
+Phase 4C is not Creative RAG or Script RAG. It does not add LangGraph retrieval nodes, prompt grounding, reranking, hybrid search, query rewrite, persistent Qdrant storage, Tool Calling, or multi-agent behavior.
+
+Phase 4C documentation:
+
+- [docs/contracts/RAG_EMBEDDING_CONTRACT_V1.md](docs/contracts/RAG_EMBEDDING_CONTRACT_V1.md)
+- [docs/contracts/RAG_VECTOR_STORE_CONTRACT_V1.md](docs/contracts/RAG_VECTOR_STORE_CONTRACT_V1.md)
+- [docs/working/PHASE_4C_VECTOR_RETRIEVAL_REPORT.md](docs/working/PHASE_4C_VECTOR_RETRIEVAL_REPORT.md)
+
+Phase 4C safe demo help:
+
+```bash
+uv run python scripts/run_phase_4c_vector_retrieval_demo.py --help
+```
+
+Live demo:
+
+```bash
+uv run python scripts/run_phase_4c_vector_retrieval_demo.py \
+  --confirm-live \
+  --embedding-model "<available-embedding-model>" \
+  --query "cup holder crumbs" \
+  --target-market US \
+  --product-category "car vacuum cleaner" \
+  --stage creative \
+  --limit 3 \
+  --run-eval
 ```
 
 ## Running Tests

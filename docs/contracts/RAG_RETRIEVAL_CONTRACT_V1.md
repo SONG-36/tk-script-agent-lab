@@ -114,6 +114,21 @@ Chunks remain knowledge guidance. They do not become business evidence and they 
 
 Phase 4B exact retrieval remains deterministic and offline. It does not add embeddings, vector search, semantic retrieval, reranking, or prompt injection.
 
+Phase 4C adds `VectorKnowledgeRetriever`, which still returns `RetrievalResult`
+V1:
+
+```text
+KnowledgeChunk
+    -> EmbeddingProvider
+    -> VectorStore
+    -> VectorKnowledgeRetriever
+    -> RetrievalResult
+```
+
+Vector retrieval may set `retriever_type = "vector"` and non-null similarity
+scores. It still must preserve provenance, evidence status, source reference,
+and chunk citation metadata.
+
 ## JSON Example
 
 ```json
