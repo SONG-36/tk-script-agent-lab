@@ -1,6 +1,6 @@
 # Runtime Configuration
 
-Phase 3A supports independent creative idea and script draft generation modes plus optional static Creative Knowledge injection.
+Phase 4D supports independent creative idea and script draft generation modes plus optional Creative Knowledge injection through off, static, or vector modes.
 
 ## Graph Configuration
 
@@ -14,10 +14,13 @@ These values are passed through LangGraph context or Studio Config.
 | `script_provider` | No | `fake` | Selects `fake` or `openai` script draft generation. |
 | `script_model` | OpenAI script mode only | `null` | OpenAI model name available for script generation. |
 | `script_prompt_version` | No | `script_draft_v1` | Prompt version used for OpenAI script draft generation. |
-| `knowledge_mode` | No | `off` | Selects no knowledge or deterministic static Creative Knowledge selection. |
-| `creative_knowledge_pack` | Static mode only | `null` | Registered Creative Knowledge Pack id, such as `tiktok_car_cleaning_v1`. |
+| `knowledge_mode` | No | `off` | Selects `off`, `static`, or `vector` Creative Knowledge mode. |
+| `creative_knowledge_pack` | Static/vector mode only | `null` | Registered Creative Knowledge Pack id, such as `tiktok_car_cleaning_v1`. |
 | `creative_knowledge_limit` | No | `6` | Maximum selected Creative Knowledge items. |
 | `knowledge_selector_version` | No | `static_selector_v1` | Deterministic selector version recorded in `KnowledgeSelectionRecord`. |
+| `creative_embedding_model` | Vector mode only | `null` | OpenAI embedding model for Creative RAG. Do not use `OPENAI_MODEL` as a fallback. |
+| `creative_retrieval_query_version` | No | `creative_retrieval_query_v1` | Deterministic Creative retrieval query version. |
+| `creative_vector_retriever_version` | No | `vector_retriever_v1` | Vector retriever version recorded in trace output. |
 
 `OPENAI_API_KEY` is not a graph configuration field and must not be placed in Studio Input, Graph State, logs, or exported workflow results.
 
@@ -29,6 +32,7 @@ These values are read from the shell environment.
 |---|---:|---|
 | `OPENAI_API_KEY` | OpenAI mode only | API key used by `OpenAICreativeProvider`. |
 | `OPENAI_MODEL` | Demo scripts only | Default model name consumed by Phase 2A and Phase 2B demo scripts. |
+| `OPENAI_EMBEDDING_MODEL` | Vector demo scripts only | Default embedding model for Phase 4C/4D vector demos. |
 
 Use placeholders in documentation and committed files. Do not commit real secrets.
 
@@ -243,3 +247,53 @@ Expected Studio observations:
 - `human_select_idea` interrupt.
 
 `.env.example` is commit-safe and contains only placeholders. Do not create or commit `.env` for Phase 3A work.
+
+## Phase 4D Studio Config
+
+API keys are read only from the Mac mini process environment. Ordinary product
+changes should stay in Studio Input.
+
+### Off
+
+```json
+{
+  "knowledge_mode": "off",
+  "creative_knowledge_pack": null,
+  "creative_knowledge_limit": 6,
+  "creative_provider": "openai",
+  "creative_model": "<available-chat-model>",
+  "creative_prompt_version": "creative_idea_v2"
+}
+```
+
+### Static
+
+```json
+{
+  "knowledge_mode": "static",
+  "creative_knowledge_pack": "tiktok_car_cleaning_v1",
+  "creative_knowledge_limit": 6,
+  "creative_provider": "openai",
+  "creative_model": "<available-chat-model>",
+  "creative_prompt_version": "creative_idea_v2"
+}
+```
+
+### Vector
+
+```json
+{
+  "knowledge_mode": "vector",
+  "creative_knowledge_pack": "tiktok_car_cleaning_v1",
+  "creative_knowledge_limit": 6,
+  "creative_embedding_model": "<available-embedding-model>",
+  "creative_retrieval_query_version": "creative_retrieval_query_v1",
+  "creative_vector_retriever_version": "vector_retriever_v1",
+  "creative_provider": "openai",
+  "creative_model": "<available-chat-model>",
+  "creative_prompt_version": "creative_idea_v2"
+}
+```
+
+Vector mode builds a process-local in-memory Qdrant runtime. It is not a
+production persistent index lifecycle.

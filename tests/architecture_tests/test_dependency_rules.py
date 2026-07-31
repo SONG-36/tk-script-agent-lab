@@ -138,12 +138,73 @@ def test_langgraph_app_does_not_depend_on_phase_4b_index_or_eval() -> None:
             "tk_script_agent_lab.knowledge.in_memory_index",
             "tk_script_agent_lab.knowledge.exact_retriever",
             "tk_script_agent_lab.knowledge.retrieval_eval",
-            "tk_script_agent_lab.knowledge.embedding_contracts",
             "tk_script_agent_lab.knowledge.openai_embedding",
-            "tk_script_agent_lab.knowledge.vector_store_contracts",
             "tk_script_agent_lab.knowledge.qdrant_vector_store",
             "tk_script_agent_lab.knowledge.vector_retriever",
         ),
+    )
+
+
+def test_phase_4d_pack_document_adapter_has_no_runtime_dependencies() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "knowledge" / "creative_pack_documents.py": imports_for(
+                SRC_ROOT / "knowledge" / "creative_pack_documents.py"
+            )
+        },
+        (
+            "langgraph",
+            "langchain_openai",
+            "openai",
+            "tk_script_agent_lab.prompts",
+            "tk_script_agent_lab.providers",
+            "scripts",
+        ),
+    )
+
+
+def test_phase_4d_query_builder_has_no_runtime_adapter_dependencies() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "knowledge" / "creative_retrieval_query.py": imports_for(
+                SRC_ROOT / "knowledge" / "creative_retrieval_query.py"
+            )
+        },
+        (
+            "langgraph",
+            "langchain_openai",
+            "openai",
+            "qdrant_client",
+            "tk_script_agent_lab.prompts",
+            "scripts",
+        ),
+    )
+
+
+def test_phase_4d_vector_runtime_does_not_import_graph_prompts_or_creative_providers() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "knowledge" / "creative_vector_runtime.py": imports_for(
+                SRC_ROOT / "knowledge" / "creative_vector_runtime.py"
+            )
+        },
+        (
+            "langgraph",
+            "tk_script_agent_lab.prompts",
+            "tk_script_agent_lab.providers",
+            "scripts",
+        ),
+    )
+
+
+def test_openai_creative_provider_does_not_import_phase_4d_runtime() -> None:
+    assert_no_imports(
+        {
+            SRC_ROOT / "providers" / "openai_creative.py": imports_for(
+                SRC_ROOT / "providers" / "openai_creative.py"
+            )
+        },
+        ("tk_script_agent_lab.knowledge.creative_vector_runtime",),
     )
 
 

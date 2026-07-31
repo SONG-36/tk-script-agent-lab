@@ -21,6 +21,7 @@ from tk_script_agent_lab.knowledge.vector_store_contracts import (
 )
 
 QDRANT_STORE_VERSION = "qdrant_local_v1"
+VECTOR_TRACE_ONLY_FILTERS = {"query_version"}
 
 
 class QdrantLocalVectorStore:
@@ -87,7 +88,7 @@ class QdrantLocalVectorStore:
         candidate_ids = [
             chunk_id
             for chunk_id, chunk in sorted(self._chunks.items())
-            if _metadata_exclusion(chunk, request.retrieval_request, effective_date) is None
+            if _metadata_exclusion(chunk, _filterable_request(request.retrieval_request), effective_date) is None
         ]
         if not candidate_ids:
             return VectorSearchResult(
@@ -183,8 +184,19 @@ def _vector_filters_applied(request: RetrievalRequest) -> dict[str, str]:
     }
     for key, value in request.filters.items():
         if key != "effective_on":
-            values[f"metadata:{key}"] = value
+            values[key if key in VECTOR_TRACE_ONLY_FILTERS else f"metadata:{key}"] = value
     return values
+
+
+def _filterable_request(request: RetrievalRequest) -> RetrievalRequest:
+    filters = {
+        key: value
+        for key, value in request.filters.items()
+        if key not in VECTOR_TRACE_ONLY_FILTERS
+    }
+    if filters == request.filters:
+        return request
+    return request.model_copy(update={"filters": filters})
 
 
 def _build_failed(

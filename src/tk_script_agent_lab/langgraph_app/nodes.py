@@ -27,8 +27,12 @@ from tk_script_agent_lab.knowledge import (
     RetrievalTrace,
     StaticKnowledgeRetriever,
 )
+from tk_script_agent_lab.knowledge.creative_retrieval_query import build_creative_retrieval_request
+from tk_script_agent_lab.knowledge.creative_vector_runtime import get_or_build_creative_vector_runtime
+from tk_script_agent_lab.knowledge.embedding_contracts import EmbeddingTrace
 from tk_script_agent_lab.knowledge.models import stable_selection_id
 from tk_script_agent_lab.knowledge.selector import KnowledgeSelectionError
+from tk_script_agent_lab.knowledge.vector_store_contracts import VectorBuildTrace
 from tk_script_agent_lab.providers import (
     CreativeGenerationRequest,
     FakeContentProvider,
@@ -102,6 +106,9 @@ def validate_input(state: GraphState) -> GraphState:
             "creative_ideas": [],
             "creative_knowledge_items": [],
             "knowledge_selection_records": [],
+            "knowledge_retrieval_records": [],
+            "embedding_records": [],
+            "vector_build_records": [],
             "selected_idea_id": None,
             "idea_review": None,
             "script_draft": None,
@@ -120,6 +127,9 @@ def validate_input(state: GraphState) -> GraphState:
         "creative_ideas": [],
         "creative_knowledge_items": [],
         "knowledge_selection_records": [],
+        "knowledge_retrieval_records": [],
+        "embedding_records": [],
+        "vector_build_records": [],
         "selected_idea_id": None,
         "idea_review": None,
         "script_draft": None,
@@ -163,10 +173,12 @@ def select_creative_knowledge(
 ) -> GraphState:
     workflow_input = state["workflow_input"]
     records = _records(state)
-    configuration = _configuration(runtime)
     try:
+        configuration = _configuration(runtime)
         request = _retrieval_request(
             workflow_input,
+            reference_insights=state.get("reference_insights", []),
+            configuration=configuration,
             limit=configuration.creative_knowledge_limit,
         )
         if configuration.knowledge_mode == "off":
@@ -194,19 +206,30 @@ def select_creative_knowledge(
             return {
                 "creative_knowledge_items": [],
                 "knowledge_selection_records": [record],
+                "knowledge_retrieval_records": [],
+                "embedding_records": [],
+                "vector_build_records": [],
                 "validation_errors": [],
                 "step_records": records,
             }
-        if configuration.creative_knowledge_pack is None:
-            raise KnowledgeSelectionError(
-                "creative_knowledge_pack is required when knowledge_mode is static"
+        if configuration.knowledge_mode == "vector":
+            result, embedding_records, vector_build_records, runtime_built, runtime_reused = _vector_retrieval_result(
+                request,
+                configuration,
             )
-        result = _knowledge_retriever(configuration).retrieve(request)
+            mode = "vector"
+        else:
+            result = _knowledge_retriever(configuration).retrieve(request)
+            embedding_records = []
+            vector_build_records = []
+            runtime_built = False
+            runtime_reused = False
+            mode = "static"
         if result.errors:
             raise KnowledgeRetrievalNodeError(result)
         record = _knowledge_selection_record(
             result,
-            mode="static",
+            mode=mode,
             selection_inputs=_selection_inputs(request),
             pack_id=result.trace.filters_applied.get("pack_id"),
             pack_version=result.trace.filters_applied.get("pack_version"),
@@ -224,6 +247,11 @@ def select_creative_knowledge(
         return {
             "creative_knowledge_items": result.items,
             "knowledge_selection_records": [record],
+            "knowledge_retrieval_records": [result.trace],
+            "embedding_records": embedding_records,
+            "vector_build_records": vector_build_records,
+            "creative_vector_runtime_built": runtime_built,
+            "creative_vector_runtime_reused": runtime_reused,
             "validation_errors": [],
             "step_records": records,
         }
@@ -242,7 +270,43 @@ def select_creative_knowledge(
             "status": WorkflowStatus.FAILED,
             "creative_knowledge_items": [],
             "knowledge_selection_records": [],
+            "knowledge_retrieval_records": [exc.result.trace],
+            "embedding_records": [],
+            "vector_build_records": [],
             "validation_errors": errors,
+            "step_records": records,
+        }
+    except PydanticValidationError as exc:
+        message = str(exc.errors()[0].get("msg"))
+        error_code = (
+            "KNOWLEDGE_SELECTION_FAILED"
+            if "creative_knowledge_pack is required when knowledge_mode is static" in message
+            else "MODEL_CONFIGURATION_MISSING"
+        )
+        error = _graph_error(
+            error_code,
+            "Graph configuration is invalid for creative knowledge selection.",
+            object_type="GraphConfiguration",
+            field="knowledge_mode",
+            related_id=message,
+        )
+        records.append(
+            _step(
+                records,
+                "select_creative_knowledge",
+                "DETERMINISTIC_CODE",
+                "FAILED",
+                error_codes=[error.code],
+            )
+        )
+        return {
+            "status": WorkflowStatus.FAILED,
+            "creative_knowledge_items": [],
+            "knowledge_selection_records": [],
+            "knowledge_retrieval_records": [],
+            "embedding_records": [],
+            "vector_build_records": [],
+            "validation_errors": [error],
             "step_records": records,
         }
     except KnowledgeSelectionError as exc:
@@ -250,7 +314,7 @@ def select_creative_knowledge(
             exc.code,
             str(exc),
             object_type="CreativeKnowledgePack",
-            object_id=configuration.creative_knowledge_pack,
+            object_id=None,
             field="creative_knowledge_pack",
         )
         records.append(
@@ -266,6 +330,9 @@ def select_creative_knowledge(
             "status": WorkflowStatus.FAILED,
             "creative_knowledge_items": [],
             "knowledge_selection_records": [],
+            "knowledge_retrieval_records": [],
+            "embedding_records": [],
+            "vector_build_records": [],
             "validation_errors": [error],
             "step_records": records,
         }
@@ -778,17 +845,69 @@ class KnowledgeRetrievalNodeError(Exception):
 def _retrieval_request(
     workflow_input: WorkflowInput,
     *,
+    reference_insights: list,
+    configuration: GraphConfiguration,
     limit: int,
 ) -> RetrievalRequest:
-    return RetrievalRequest(
-        stage="creative",
-        target_market=workflow_input.product_profile.target_market,
-        product_category=workflow_input.product_profile.category,
-        query=f"Creative guidance for {workflow_input.product_profile.product_name}",
-        limit=limit,
-        filters={
-            "product_id": workflow_input.product_profile.product_id,
-        },
+    request = build_creative_retrieval_request(workflow_input, reference_insights, configuration)
+    return request.model_copy(update={"limit": limit})
+
+
+def _vector_retrieval_result(
+    request: RetrievalRequest,
+    configuration: GraphConfiguration,
+) -> tuple[RetrievalResult, list[EmbeddingTrace], list[VectorBuildTrace], bool, bool]:
+    if configuration.creative_knowledge_pack is None:
+        raise KnowledgeSelectionError("creative_knowledge_pack is required when knowledge_mode is vector")
+    if configuration.creative_embedding_model is None:
+        raise KnowledgeSelectionError("creative_embedding_model is required when knowledge_mode is vector")
+    build = get_or_build_creative_vector_runtime(
+        pack_id=configuration.creative_knowledge_pack,
+        embedding_model=configuration.creative_embedding_model,
+        retriever_version=configuration.creative_vector_retriever_version,
+    )
+    if build.errors or build.runtime is None:
+        return (
+            RetrievalResult(
+                items=[],
+                trace=_empty_retrieval_trace(
+                    request,
+                    retriever_type="vector",
+                    retriever_version=configuration.creative_vector_retriever_version,
+                    filters_applied={
+                        **request.filters,
+                        "pack_id": configuration.creative_knowledge_pack,
+                    },
+                ),
+                errors=build.errors,
+            ),
+            [],
+            [],
+            build.runtime_built,
+            build.runtime_reused,
+        )
+    run = build.runtime.retrieve(request)
+    embedding_records = [build.runtime.document_embedding_trace]
+    if run.query_embedding_trace is not None:
+        embedding_records.append(run.query_embedding_trace)
+    filters = {
+        **run.result.trace.filters_applied,
+        "pack_id": build.runtime.pack_id,
+        "pack_version": build.runtime.pack_version,
+        "runtime_built": str(build.runtime_built).lower(),
+        "runtime_reused": str(build.runtime_reused).lower(),
+        "document_embedding_calls": str(build.runtime.document_embedding_calls if build.runtime_built else 0),
+        "query_embedding_calls": str(run.query_embedding_calls),
+        "document_count": str(build.runtime.ingestion_trace.document_count),
+        "chunk_count": str(build.runtime.ingestion_trace.chunk_count),
+    }
+    result = run.result.model_copy(update={"trace": run.result.trace.model_copy(update={"filters_applied": filters})})
+    return (
+        result,
+        embedding_records,
+        [build.runtime.vector_build_trace],
+        build.runtime_built,
+        build.runtime_reused,
     )
 
 
@@ -831,6 +950,31 @@ def _empty_retrieval_result(
             },
         ),
         errors=[],
+    )
+
+
+def _empty_retrieval_trace(
+    request: RetrievalRequest,
+    *,
+    retriever_type: str,
+    retriever_version: str,
+    filters_applied: dict[str, str],
+) -> RetrievalTrace:
+    return RetrievalTrace(
+        retriever_type=retriever_type,  # type: ignore[arg-type]
+        retriever_version=retriever_version,
+        request_id=stable_selection_id(
+            mode="vector",
+            pack_id=filters_applied.get("pack_id"),
+            pack_version=filters_applied.get("pack_version"),
+            selector_version=retriever_version,
+            selection_inputs=_selection_inputs(request),
+            selected_ids=[],
+        ),
+        candidate_ids=[],
+        selected_ids=[],
+        excluded=[],
+        filters_applied=filters_applied,
     )
 
 

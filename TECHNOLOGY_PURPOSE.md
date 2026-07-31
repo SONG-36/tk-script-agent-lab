@@ -25,6 +25,8 @@ Technology should be added only when it serves the current phase.
 | OpenAI Embeddings | Yes | Yes | Phase 4C |
 | Qdrant Local | Yes | Yes | Phase 4C |
 | VectorKnowledgeRetriever | Yes | Yes | Phase 4C |
+| Creative Vector Runtime | Yes | Yes | Phase 4D |
+| Creative RAG Grounding | Yes | Yes | Phase 4D |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -149,3 +151,16 @@ returns `RetrievalResult` V1.
 
 Phase 4C does not use Chat Completions, rerankers, hybrid search, query rewrite,
 Prompt Grounding, or LangGraph retrieval nodes.
+
+## Phase 4D Creative RAG Boundary
+
+Creative Vector Runtime is introduced only to connect existing Creative
+Knowledge to the existing `select_creative_knowledge` node. It is process-local,
+in-memory, and non-persistent.
+
+Creative RAG Grounding keeps retrieved knowledge in the Creative Guidance
+section of `creative_idea_v2`. It does not make retrieved knowledge a product
+fact, selling point, reference insight, or allowed `SourceUsage`.
+
+Phase 4D does not implement Script RAG, reranking, hybrid retrieval, query
+rewrite, Tool Calling, or a production vector index lifecycle.

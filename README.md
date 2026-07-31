@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 4C.
+Current status: Phase 4D.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -24,9 +24,11 @@ Phase 4A adds offline RAG ingestion contracts and deterministic chunking. It pre
 
 Phase 4B adds a pure in-memory index, exact metadata retrieval, deterministic ranking, and retrieval eval. It remains offline and does not add embeddings, a vector database, semantic retrieval, or LangGraph retrieval nodes.
 
-Phase 4C adds a real OpenAI Embedding adapter, Qdrant Local/In-Memory vector store adapter, and `VectorKnowledgeRetriever`. It still does not connect retrieval to LangGraph, Creative Prompt, or Script Prompt.
+Phase 4C adds a real OpenAI Embedding adapter, Qdrant Local/In-Memory vector store adapter, and `VectorKnowledgeRetriever`.
 
-There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
+Phase 4D connects Creative RAG to the existing `select_creative_knowledge` LangGraph node. It injects vector-retrieved Creative Guidance into `creative_idea_v2` while keeping Script RAG out of scope.
+
+There is still no real Agent in this phase. There are no tools, Script RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, second review interrupt, or production services.
 
 ## Learning Goal
 
@@ -41,7 +43,7 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 3A adds only static Creative Knowledge guidance before creative idea generation. Later phases may introduce minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 4D adds Creative RAG only. Later phases may introduce Script RAG, tool calling, and eval loops, but none of those are implemented yet.
 
 ## Phase 1A Capability
 
@@ -404,6 +406,74 @@ uv run python scripts/run_phase_4c_vector_retrieval_demo.py \
   --run-eval
 ```
 
+## Phase 4D Capability
+
+Phase 4D can:
+
+- run `knowledge_mode=off`, `knowledge_mode=static`, or `knowledge_mode=vector`;
+- reuse the same Creative Knowledge Pack for static and vector modes;
+- convert Creative Knowledge Pack items into `KnowledgeDocument` values;
+- build a process-local Qdrant in-memory vector runtime;
+- reuse the runtime in the same process for the same pack, version, embedding model, and retriever version;
+- call vector retrieval inside the existing `select_creative_knowledge` node;
+- record retrieval, embedding, and vector build traces in Graph State;
+- inject selected vector guidance into `creative_idea_v2`;
+- keep Creative Guidance separate from Business Evidence and `SourceUsage`;
+- stop before Creative Provider if vector retrieval fails;
+- keep Human Interrupt behavior unchanged.
+
+Phase 4D Graph flow:
+
+```text
+validate_manual_insights
+→ select_creative_knowledge
+→ generate_creative_ideas
+→ validate_creative_ideas
+→ human_select_idea
+→ INTERRUPT
+```
+
+Phase 4D is Creative RAG only. Script RAG, Script Knowledge, reranking, hybrid search, query rewrite, persistent Qdrant, embedding cache services, Tool Calling, and multi-agent behavior are not implemented.
+
+Documentation:
+
+- [docs/architecture/CREATIVE_RAG_RUNTIME_V1.md](docs/architecture/CREATIVE_RAG_RUNTIME_V1.md)
+- [docs/contracts/CREATIVE_RAG_GROUNDING_V1.md](docs/contracts/CREATIVE_RAG_GROUNDING_V1.md)
+- [docs/working/PHASE_4D_CREATIVE_RAG_REPORT.md](docs/working/PHASE_4D_CREATIVE_RAG_REPORT.md)
+- [docs/RUNTIME_CONFIGURATION.md](docs/RUNTIME_CONFIGURATION.md)
+
+Safe demo help:
+
+```bash
+uv run python scripts/run_phase_4d_creative_rag_demo.py --help
+```
+
+Offline fake demos:
+
+```bash
+uv run python scripts/run_phase_4d_creative_rag_demo.py \
+  --knowledge-mode off \
+  --creative-provider fake
+
+uv run python scripts/run_phase_4d_creative_rag_demo.py \
+  --knowledge-mode static \
+  --creative-provider fake \
+  --knowledge-pack tiktok_car_cleaning_v1
+```
+
+Live Creative RAG demo:
+
+```bash
+uv run python scripts/run_phase_4d_creative_rag_demo.py \
+  --confirm-live \
+  --knowledge-mode vector \
+  --creative-provider openai \
+  --creative-model "<available-chat-model>" \
+  --embedding-model "<available-embedding-model>" \
+  --knowledge-pack tiktok_car_cleaning_v1 \
+  --knowledge-limit 6
+```
+
 ## Running Tests
 
 ```bash
@@ -418,12 +488,13 @@ uv run python -m pytest -q
 - no production deployment;
 - no real creator scraping;
 - no business API integration;
-- no RAG, Skills, Tool Calling, or vector database;
+- no Script RAG;
+- no Skills or Tool Calling;
 - no ScriptDraft Knowledge Pack;
-- no embeddings;
-- no vector database;
-- no semantic retrieval;
+- no persistent vector database;
 - no reranker;
+- no hybrid retrieval;
+- no query rewrite;
 - no automatic knowledge generation;
 - no automatic A/B winner selection;
 - no copied `enrichment_agent` package from the reference project.

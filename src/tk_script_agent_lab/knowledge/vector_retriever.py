@@ -18,6 +18,8 @@ from tk_script_agent_lab.knowledge.exact_retriever import RESERVED_METADATA_FIEL
 from tk_script_agent_lab.knowledge.ingestion_contracts import KnowledgeChunk
 from tk_script_agent_lab.knowledge.vector_store_contracts import VectorSearchRequest, VectorStore
 
+VECTOR_TRACE_ONLY_FILTERS = {"query_version"}
+
 
 class VectorKnowledgeRetriever:
     def __init__(
@@ -186,7 +188,7 @@ def _vector_filters_applied(request: RetrievalRequest) -> dict[str, str]:
     }
     for key, value in request.filters.items():
         if key != "effective_on":
-            values[f"metadata:{key}"] = value
+            values[key if key in VECTOR_TRACE_ONLY_FILTERS else f"metadata:{key}"] = value
     return values
 
 

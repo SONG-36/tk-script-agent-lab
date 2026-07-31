@@ -73,6 +73,33 @@ def test_static_knowledge_configuration_can_parse_pack_id_without_api_key() -> N
     assert "api" not in GraphConfiguration.model_fields
 
 
+def test_phase_4d_knowledge_mode_configuration_boundaries() -> None:
+    assert GraphConfiguration(knowledge_mode="off").creative_embedding_model is None
+    assert GraphConfiguration(
+        knowledge_mode="static",
+        creative_knowledge_pack="tiktok_car_cleaning_v1",
+    ).creative_embedding_model is None
+    vector = GraphConfiguration(
+        knowledge_mode="vector",
+        creative_knowledge_pack="tiktok_car_cleaning_v1",
+        creative_embedding_model="embedding-test",
+    )
+
+    assert vector.knowledge_mode == "vector"
+    assert vector.creative_retrieval_query_version == "creative_retrieval_query_v1"
+    assert vector.creative_vector_retriever_version == "vector_retriever_v1"
+    assert "api" not in GraphConfiguration.model_fields
+
+    with pytest.raises(ValidationError):
+        GraphConfiguration(knowledge_mode="static")
+    with pytest.raises(ValidationError):
+        GraphConfiguration(knowledge_mode="vector", creative_embedding_model="embedding-test")
+    with pytest.raises(ValidationError):
+        GraphConfiguration(knowledge_mode="vector", creative_knowledge_pack="tiktok_car_cleaning_v1")
+    with pytest.raises(ValidationError):
+        GraphConfiguration(knowledge_mode="unknown")
+
+
 def test_creative_and_script_providers_are_independent() -> None:
     creative_only = GraphConfiguration(
         creative_provider="openai",

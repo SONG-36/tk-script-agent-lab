@@ -95,9 +95,11 @@ No async, batch, streaming, reranking, upsert, delete, index rebuild, or health-
 - maps selection information to `RetrievalTrace`;
 - never calls a model or network.
 
-## Future Vector Adapter
+## Vector Adapter
 
-A future vector adapter should implement `KnowledgeRetriever`. It may add embeddings and vector search internally in a later phase, but it must still return `RetrievalResult` and keep knowledge separate from business evidence.
+`VectorKnowledgeRetriever` implements `KnowledgeRetriever`. It adds embeddings
+and vector search internally, but it still returns `RetrievalResult` and keeps
+knowledge separate from business evidence.
 
 ## Ingestion Relationship
 
@@ -128,6 +130,10 @@ KnowledgeChunk
 Vector retrieval may set `retriever_type = "vector"` and non-null similarity
 scores. It still must preserve provenance, evidence status, source reference,
 and chunk citation metadata.
+
+Phase 4D connects vector retrieval to Creative generation through
+`select_creative_knowledge`. `query_version` is recorded in trace filters but is
+not used as a chunk metadata filter.
 
 ## JSON Example
 

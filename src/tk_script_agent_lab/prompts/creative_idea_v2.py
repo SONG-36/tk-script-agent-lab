@@ -37,6 +37,9 @@ def build_creative_idea_context(request: CreativeGenerationRequest) -> dict[str,
             "anti_examples": _metadata_json_list(item.metadata.get("anti_examples")),
             "provenance_type": item.provenance_type,
             "evidence_status": item.evidence_status,
+            "source_reference": item.source_reference,
+            "score": item.score,
+            "metadata": item.metadata,
             "boundary": "creative_guidance_only_not_business_evidence",
         }
         for item in request.creative_knowledge_items
@@ -60,6 +63,8 @@ def build_creative_idea_context(request: CreativeGenerationRequest) -> dict[str,
                 "SourceUsage",
                 "official TikTok policy",
             ],
+            "similarity_score_boundary": "score is retrieval similarity only, not fact strength",
+            "allowed_source_usage_rule": "only BUSINESS EVIDENCE allowed_source_ids may appear in source_usages",
         },
     }
 

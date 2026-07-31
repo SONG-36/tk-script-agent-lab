@@ -28,7 +28,10 @@ from tk_script_agent_lab.knowledge import (
     CreativeKnowledgeItem,
     KnowledgeSelectionRecord,
     RetrievedKnowledge,
+    RetrievalTrace,
 )
+from tk_script_agent_lab.knowledge.embedding_contracts import EmbeddingTrace
+from tk_script_agent_lab.knowledge.vector_store_contracts import VectorBuildTrace
 from tk_script_agent_lab.providers import ModelCallRecord
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
@@ -55,6 +58,9 @@ def make_checkpointer() -> InMemorySaver:
             InsightType,
             KnowledgeSelectionRecord,
             RetrievedKnowledge,
+            RetrievalTrace,
+            EmbeddingTrace,
+            VectorBuildTrace,
             ModelCallRecord,
             ProductFact,
             ProductProfile,

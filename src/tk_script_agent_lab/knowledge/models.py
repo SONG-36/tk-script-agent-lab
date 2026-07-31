@@ -14,7 +14,7 @@ CreativeKnowledgeKind = Literal[
     "creative_pattern",
 ]
 KnowledgeStage = Literal["creative"]
-KnowledgeMode = Literal["off", "static"]
+KnowledgeMode = Literal["off", "static", "vector"]
 KnowledgeProvenanceType = Literal[
     "internal_working_rule",
     "experiment_observation",

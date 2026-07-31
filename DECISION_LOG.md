@@ -179,3 +179,33 @@ Reason: LangGraph and future Prompt Grounding should not depend on a specific ve
 Decision: `ExactMetadataKnowledgeRetriever` remains supported after vector retrieval exists.
 
 Reason: it provides zero-cost regression, precise filtering, and a stable comparison baseline.
+
+## 2026-07-31: Creative RAG Reuses select_creative_knowledge
+
+Decision: Creative RAG reuses the existing `select_creative_knowledge` Graph node.
+
+Reason: Graph already has a clear retrieval boundary; keeping embedding and index details inside that node preserves Human workflow stability.
+
+## 2026-07-31: Static And Vector Modes Share One Pack
+
+Decision: static and vector knowledge modes use the same Creative Knowledge Pack.
+
+Reason: this avoids duplicate knowledge sources, lowers content drift, and supports off/static/vector comparison.
+
+## 2026-07-31: Creative Retrieval Query Is Deterministic
+
+Decision: the Creative retrieval query is deterministic and versioned.
+
+Reason: reproducible retrieval is easier to test and inspect than model-generated query rewrite.
+
+## 2026-07-31: Vector Runtime Is Process-Local
+
+Decision: the Phase 4D vector runtime is process-local and non-persistent.
+
+Reason: Phase 4D validates Graph integration without adding production index lifecycle, database, or storage concerns.
+
+## 2026-07-31: Retrieved Guidance Is Not Business Evidence
+
+Decision: retrieved Creative Guidance remains separate from Business Evidence.
+
+Reason: vector similarity does not prove truth, and knowledge IDs must not become `SourceUsage`.

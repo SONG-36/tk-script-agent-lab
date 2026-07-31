@@ -1,7 +1,7 @@
 # RAG Framework Phase Map
 
 This map separates the RAG framework pieces that already exist from future
-work. Phase 4C adds vector retrieval adapters but is still not Creative or Script RAG.
+work. Phase 4D adds Creative RAG but is still not Script RAG.
 
 ## Current Baseline
 
@@ -40,6 +40,15 @@ Phase 4C completed:
 - `VectorKnowledgeRetriever`;
 - Retrieval Eval reuse.
 
+Phase 4D completed:
+
+- Creative Pack to `KnowledgeDocument` adapter;
+- deterministic Creative Retrieval Query;
+- process-local Creative Vector Runtime;
+- `knowledge_mode=vector`;
+- Creative RAG connection through `select_creative_knowledge`;
+- `creative_idea_v2` Creative Guidance grounding.
+
 The current implemented chain is:
 
 ```text
@@ -62,16 +71,23 @@ KnowledgeChunk
 -> RetrievalResult
 ```
 
+The Phase 4D Creative RAG chain is:
+
+```text
+CreativeKnowledgePack
+-> KnowledgeDocument
+-> KnowledgeChunk
+-> OpenAIEmbeddingProvider
+-> QdrantLocalVectorStore
+-> VectorKnowledgeRetriever
+-> select_creative_knowledge
+-> creative_idea_v2 Creative Guidance
+```
+
 Ingestion and Retrieval are different Ports. Ingestion prepares standardized
 chunks. Retrieval later chooses relevant knowledge for a task.
 
 ## Future Phases
-
-Phase 4D, not implemented:
-
-- Creative RAG connection to LangGraph;
-- retrieval result injection into the Creative Prompt;
-- observable Retrieval Trace.
 
 Phase 4E, not implemented:
 
@@ -98,5 +114,4 @@ The current codebase does not implement:
 - Vector DB;
 - Semantic Retrieval;
 - Reranker;
-- Creative RAG;
 - Script RAG.

@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 4C implementation scope. Phase 4C is implemented and pending live validation if OpenAI embedding credentials are absent.
+Current status: Phase 4D implementation scope.
 
 ## Phase 0: Project Baseline
 
@@ -127,11 +127,13 @@ Phase 4C does not connect retrieval to LangGraph or prompts.
 
 ## Phase 4D: Creative RAG
 
-Future scope:
+Current scope:
 
-- connect retrieval to Creative LangGraph path;
-- inject retrieved knowledge into the Creative Prompt;
-- keep Retrieval Trace observable.
+- connect vector retrieval to the existing Creative LangGraph path;
+- reuse the static Creative Knowledge Pack as the vector corpus;
+- inject retrieved knowledge into `creative_idea_v2`;
+- keep Retrieval, Embedding, and Vector Build traces observable;
+- keep Script RAG out of scope.
 
 ## Phase 4E: Script RAG
 
