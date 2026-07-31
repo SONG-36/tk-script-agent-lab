@@ -1,8 +1,10 @@
 from pathlib import Path
 
+from langgraph.runtime import Runtime
 from langgraph.types import interrupt
 from pydantic import ValidationError as PydanticValidationError
 
+from tk_script_agent_lab.configuration import GraphConfiguration
 from tk_script_agent_lab.domain import (
     DomainDataset,
     ReviewDecision,
@@ -19,9 +21,11 @@ from tk_script_agent_lab.langgraph_app.state import (
 from tk_script_agent_lab.providers import (
     CreativeGenerationRequest,
     FakeContentProvider,
+    OpenAICreativeProvider,
     ProviderOutputError,
     ScriptGenerationRequest,
 )
+from tk_script_agent_lab.providers.openai_creative import failed_model_call_record
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
 
@@ -63,6 +67,7 @@ def validate_input(state: GraphState) -> GraphState:
             "status": WorkflowStatus.INPUT_INVALID,
             "validation_errors": errors,
             "step_records": records,
+            "model_call_records": [],
         }
 
     records.append(
@@ -90,6 +95,7 @@ def validate_input(state: GraphState) -> GraphState:
             ]
             + errors,
             "step_records": records,
+            "model_call_records": [],
         }
     return {
         "run_id": workflow_input.run_id,
@@ -102,6 +108,7 @@ def validate_input(state: GraphState) -> GraphState:
         "script_draft": None,
         "validation_errors": [],
         "step_records": records,
+        "model_call_records": [],
     }
 
 
@@ -133,36 +140,77 @@ def validate_manual_insights(state: GraphState) -> GraphState:
     }
 
 
-def generate_creative_ideas(state: GraphState) -> GraphState:
+def generate_creative_ideas(
+    state: GraphState,
+    runtime: Runtime[GraphConfiguration] = None,  # type: ignore[assignment]
+) -> GraphState:
     workflow_input = state["workflow_input"]
     records = _records(state)
+    configuration = _configuration(runtime)
+    request = CreativeGenerationRequest(
+        product_profile=workflow_input.product_profile,
+        product_facts=workflow_input.product_facts,
+        selling_points=workflow_input.selling_points,
+        reference_insights=state.get("reference_insights", []),
+        idea_count=workflow_input.idea_count,
+    )
     try:
-        ideas = _provider().generate_creative_ideas(
-            CreativeGenerationRequest(
-                product_profile=workflow_input.product_profile,
-                product_facts=workflow_input.product_facts,
-                selling_points=workflow_input.selling_points,
-                reference_insights=state.get("reference_insights", []),
-                idea_count=workflow_input.idea_count,
-            )
-        )
+        if configuration.creative_provider == "fake":
+            ideas = _provider().generate_creative_ideas(request)
+            model_call_records = state.get("model_call_records", [])
+            executor = "FAKE_PROVIDER"
+        else:
+            if configuration.creative_model is None:
+                raise ProviderOutputError(
+                    _graph_error(
+                        "MODEL_CONFIGURATION_MISSING",
+                        "creative_model is required for OpenAI creative provider.",
+                        object_type="GraphConfiguration",
+                        field="creative_model",
+                    )
+                )
+            result = OpenAICreativeProvider(
+                model=configuration.creative_model,
+                prompt_version=configuration.creative_prompt_version,
+            ).generate_creative_ideas(request)
+            ideas = result.creative_ideas
+            model_call_records = [
+                *state.get("model_call_records", []),
+                result.model_call_record,
+            ]
+            executor = "MODEL"
         records.append(
             _step(
                 records,
                 "generate_creative_ideas",
-                "FAKE_PROVIDER",
+                executor,
                 "SUCCESS",
                 input_ids=[insight.insight_id for insight in state.get("reference_insights", [])],
                 output_ids=[idea.creative_idea_id for idea in ideas],
             )
         )
-        return {"creative_ideas": ideas, "validation_errors": [], "step_records": records}
+        return {
+            "creative_ideas": ideas,
+            "validation_errors": [],
+            "step_records": records,
+            "model_call_records": model_call_records,
+        }
     except ProviderOutputError as exc:
+        model_call_records = state.get("model_call_records", [])
+        if configuration.creative_provider == "openai":
+            model_call_records = [
+                *model_call_records,
+                failed_model_call_record(
+                    model=configuration.creative_model or "",
+                    prompt_version=configuration.creative_prompt_version,
+                    error_code=exc.error.code,
+                ),
+            ]
         records.append(
             _step(
                 records,
                 "generate_creative_ideas",
-                "FAKE_PROVIDER",
+                "MODEL" if configuration.creative_provider == "openai" else "FAKE_PROVIDER",
                 "FAILED",
                 error_codes=[exc.error.code],
             )
@@ -171,6 +219,7 @@ def generate_creative_ideas(state: GraphState) -> GraphState:
             "status": WorkflowStatus.FAILED,
             "validation_errors": [exc.error],
             "step_records": records,
+            "model_call_records": model_call_records,
         }
 
 
@@ -506,6 +555,16 @@ def _provider() -> FakeContentProvider:
     )
     _workflow_input, fixtures, _reviews = load_golden_case(case_dir)
     return FakeContentProvider(fixtures)
+
+
+def _configuration(
+    runtime: Runtime[GraphConfiguration] | None,
+) -> GraphConfiguration:
+    if runtime is None or runtime.context is None:
+        return GraphConfiguration()
+    if isinstance(runtime.context, GraphConfiguration):
+        return runtime.context
+    return GraphConfiguration.model_validate(runtime.context)
 
 
 def _find_idea(state: GraphState, idea_id: str | None):

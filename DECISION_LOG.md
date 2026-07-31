@@ -47,3 +47,15 @@ Reason: this avoids depending on Graph before the business chain is proven, avoi
 Decision: Reference insights are manually supplied in Phase 1C.
 
 Reason: this validates Graph and the business chain first. Reference video analysis standards can be explored later through knowledge base, Skills, or real model experiments without hard-coding immature analysis rules now.
+
+## 2026-07-30: Phase 2A Replaces Only CreativeIdea Generation
+
+Decision: Phase 2A replaces only `CreativeIdea` generation with a real OpenAI model.
+
+Reason: one model boundary is easier to observe, debug, and evaluate at a time. The workflow continues to reuse manual `ReferenceInsight`, deterministic validators, the human gate, and Fake Provider script fixtures, which keeps cost and non-determinism controlled.
+
+## 2026-07-30: Model-Generated Identities Are Not Trusted
+
+Decision: model output is limited to semantic candidate content, and official `CreativeIdea` IDs, `SourceUsage` IDs, `product_id`, ordering, and validation errors are produced by deterministic code.
+
+Reason: model-generated IDs can be duplicate, unstable, invalid, or inconsistent with the domain graph. Deterministic mapping keeps cross-object references auditable and repeatable.

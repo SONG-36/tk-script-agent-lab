@@ -7,7 +7,8 @@ Technology should be added only when it serves the current phase.
 | Pydantic | Yes | Yes | Phase 1A |
 | LLM Provider | Yes | Yes | Phase 2 |
 | RAG | No | Yes | Phase 3 |
-| LangGraph | No | Yes | Phase 4 |
+| LangGraph | Yes | Yes | Phase 1C |
+| langchain-openai | Yes | Yes | Phase 2A |
 | Tool Calling | No | Yes | Phase 5 |
 | Multi-Agent | No | No | Not planned |
 
@@ -44,3 +45,17 @@ LangGraph does not prove business facts, product truth, source validity, or scri
 LangGraph Studio is a development and debugging interface, not the formal product UI.
 
 ReferenceInsight is manually supplied in Phase 1C. Fake Provider still only supplies CreativeIdea and ScriptDraft fixtures.
+
+## Phase 2A OpenAI Creative Boundary
+
+`langchain-openai` is introduced in Phase 2A only for OpenAI `CreativeIdea` semantic generation. It is not a general provider registry, agent layer, tool layer, or script generation system.
+
+OpenAI receives only the constrained prompt context built by deterministic code: product profile, verified facts, selling points, manually supplied reference insights, prohibited claims, requested idea count, and allowed source IDs. `UNVERIFIED` and `REJECTED` fact values are not made available as usable facts.
+
+Pydantic structured output defines the model response shape. Structured output proves that the response fits the requested schema; it does not prove that the creative claim is true, compliant, or source-safe.
+
+The deterministic validator still owns source and fact rules. It checks source IDs, product references, output count, duplicate ideas, domain object construction, and whether the graph may continue to the human gate.
+
+LangGraph owns orchestration: selecting Fake or OpenAI mode from configuration, writing generated ideas into state, routing failures to `END`, and interrupting for human review.
+
+The Human Gate owns the creative decision. The model does not auto-select, auto-approve, auto-review, or generate a fallback script.

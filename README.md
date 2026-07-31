@@ -4,7 +4,7 @@
 
 ## Current Phase
 
-Current status: Phase 1C.
+Current status: Phase 2A.
 
 Phase 0 established the repository baseline, reference audit archive, learning roadmap, technology boundaries, Golden Case fixtures, and import/test scaffolding.
 
@@ -14,7 +14,9 @@ Phase 1B adds a fixture-backed Fake Provider and a deterministic two-stage workf
 
 Phase 1C adds a LangGraph visualization and orchestration layer over the already validated workflow.
 
-There is still no real Agent in this phase. There are no model calls, tools, RAG, LangGraph workflows, TikTok API integrations, scraping integrations, or production services.
+Phase 2A adds an optional real OpenAI provider for `CreativeIdea` generation only. The default remains Fake Provider mode, so the project can run and test without an API key or model cost.
+
+There is still no real Agent in this phase. There are no tools, RAG, Skills, Tool Calling, TikTok API integrations, scraping integrations, real `ScriptDraft` model calls, or production services.
 
 ## Learning Goal
 
@@ -29,7 +31,7 @@ The project is designed to help understand:
 
 ## Phase Model
 
-The lab evolves one phase at a time. Phase 1C runs the same deterministic chain through LangGraph. Later phases may introduce real LLM usage, minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
+The lab evolves one phase at a time. Phase 2A replaces only the creative idea model boundary with optional OpenAI structured output. Later phases may introduce real script generation, minimal RAG, tool calling, and eval loops, but none of those are implemented yet.
 
 ## Phase 1A Capability
 
@@ -144,6 +146,35 @@ uv run python scripts/run_phase_1c_graph_demo.py \
 
 Current boundary: ReferenceInsight is manually supplied, while CreativeIdea and ScriptDraft still come from Fake Provider fixtures. There is still no real model, RAG, Tool Calling, or product UI.
 
+## Phase 2A Capability
+
+Phase 2A can:
+
+- keep Fake Provider as the default path with no `OPENAI_API_KEY`;
+- switch the LangGraph creative idea node to OpenAI through graph context or Studio Config;
+- build a constrained prompt context from product input, verified facts, selling points, manual `ReferenceInsight`, prohibited claims, and allowed source IDs;
+- request Pydantic structured output for `CreativeIdeaCandidate` values;
+- map model candidates to official domain `CreativeIdea` objects with deterministic IDs;
+- validate model output before entering the human interrupt;
+- record one `ModelCallRecord` for one OpenAI creative generation call.
+
+Phase 2A flow:
+
+```text
+Studio Input
+→ deterministic validation
+→ manual ReferenceInsight
+→ OpenAI CreativeIdea
+→ Pydantic Structured Output
+→ deterministic validation
+→ LangGraph Interrupt
+→ Human Review
+```
+
+Runtime configuration for Fake and OpenAI modes is documented in [docs/RUNTIME_CONFIGURATION.md](docs/RUNTIME_CONFIGURATION.md).
+
+Script boundary: Phase 2A only replaces `CreativeIdea` generation. `ReferenceInsight` is still manually supplied, and `ScriptDraft` is still backed by Fake Provider fixtures. If an OpenAI-generated new idea is approved and no fixture script exists, the graph returns `SCRIPT_NOT_AVAILABLE`; it does not create a default script, choose another idea, or fabricate a `ScriptDraft`. Phase 2B is the correct place to replace script generation with a real model.
+
 ## Running Tests
 
 ```bash
@@ -158,6 +189,8 @@ uv run python -m pytest -q
 - no production deployment;
 - no real creator scraping;
 - no business API integration;
+- no RAG, Skills, Tool Calling, or vector database;
+- no real `ScriptDraft` model in Phase 2A;
 - no copied `enrichment_agent` package from the reference project.
 
 ## Reference

@@ -1,6 +1,6 @@
 # Learning Roadmap
 
-Current status: Phase 1C implementation scope. Phase 1C is complete only when tests, graph demo commands, and validation commands pass.
+Current status: Phase 2A implementation scope. Phase 2A is complete only when tests, import checks, compile checks, graph demos, and validation commands pass.
 
 ## Phase 0: Project Baseline
 
@@ -32,7 +32,7 @@ Completed scope:
 
 ## Phase 1C: LangGraph Visualization And Studio Human Gate
 
-Implemented scope:
+Completed scope:
 
 - single LangGraph entry in `langgraph.json`;
 - input, internal, and output state layering;
@@ -40,9 +40,23 @@ Implemented scope:
 - LangGraph interrupt/resume for human idea selection;
 - Studio-ready input fixture.
 
-## Phase 2: Real LLM
+## Phase 2A: OpenAI CreativeIdea Provider
 
-Introduce a real LLM provider for constrained generation only after deterministic inputs, outputs, and validation boundaries are clear.
+Current scope:
+
+- optional OpenAI provider for `CreativeIdea` generation only;
+- Fake Provider remains the default no-key path;
+- constrained prompt context for product inputs, verified facts, selling points, and manual reference insights;
+- Pydantic structured output for model candidates;
+- deterministic mapping from candidates to domain IDs;
+- model call records in graph state;
+- LangGraph routing that stops failed model output before the human gate.
+
+Phase 2A does not generate real `ScriptDraft` values. Phase 2B should handle that boundary separately.
+
+## Phase 2B: Real ScriptDraft Provider
+
+Replace only the script generation boundary with a real model after OpenAI-generated ideas can be reviewed and selected. Keep validation and human approval outside the model.
 
 ## Phase 3: Minimal RAG
 

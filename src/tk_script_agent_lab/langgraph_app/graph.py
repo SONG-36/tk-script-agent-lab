@@ -1,5 +1,6 @@
 from langgraph.graph import END, START, StateGraph
 
+from tk_script_agent_lab.configuration import GraphConfiguration
 from tk_script_agent_lab.langgraph_app.nodes import (
     apply_human_review,
     finalize_result,
@@ -13,6 +14,7 @@ from tk_script_agent_lab.langgraph_app.nodes import (
 )
 from tk_script_agent_lab.langgraph_app.routing import (
     route_after_apply_human_review,
+    route_after_generate_creative_ideas,
     route_after_validate_creative_ideas,
     route_after_validate_input,
     route_after_validate_manual_insights,
@@ -27,6 +29,7 @@ from tk_script_agent_lab.langgraph_app.state import (
 def build_graph(checkpointer=None):
     workflow = StateGraph(
         GraphState,
+        context_schema=GraphConfiguration,
         input_schema=GraphInputState,
         output_schema=GraphOutputState,
     )
@@ -41,18 +44,48 @@ def build_graph(checkpointer=None):
     workflow.add_node("finalize_result", finalize_result)
 
     workflow.add_edge(START, "validate_input")
-    workflow.add_conditional_edges("validate_input", route_after_validate_input)
+    workflow.add_conditional_edges(
+        "validate_input",
+        route_after_validate_input,
+        {
+            "input_valid": "validate_manual_insights",
+            "input_invalid": END,
+        },
+    )
     workflow.add_conditional_edges(
         "validate_manual_insights",
         route_after_validate_manual_insights,
+        {
+            "manual_insights_valid": "generate_creative_ideas",
+            "manual_insights_invalid": END,
+        },
     )
-    workflow.add_edge("generate_creative_ideas", "validate_creative_ideas")
+    workflow.add_conditional_edges(
+        "generate_creative_ideas",
+        route_after_generate_creative_ideas,
+        {
+            "generation_valid": "validate_creative_ideas",
+            "generation_failed": END,
+        },
+    )
     workflow.add_conditional_edges(
         "validate_creative_ideas",
         route_after_validate_creative_ideas,
+        {
+            "creative_ideas_valid": "human_select_idea",
+            "creative_ideas_invalid": END,
+        },
     )
     workflow.add_edge("human_select_idea", "apply_human_review")
-    workflow.add_conditional_edges("apply_human_review", route_after_apply_human_review)
+    workflow.add_conditional_edges(
+        "apply_human_review",
+        route_after_apply_human_review,
+        {
+            "approved": "generate_script",
+            "pending": "human_select_idea",
+            "terminal": "finalize_result",
+        },
+    )
     workflow.add_edge("generate_script", "validate_script")
     workflow.add_edge("validate_script", "finalize_result")
     workflow.add_edge("finalize_result", END)

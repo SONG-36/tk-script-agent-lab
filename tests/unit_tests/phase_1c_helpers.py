@@ -24,6 +24,7 @@ from tk_script_agent_lab.domain.enums import (
     VerificationStatus,
 )
 from tk_script_agent_lab.langgraph_app.graph import build_graph
+from tk_script_agent_lab.providers import ModelCallRecord
 from tk_script_agent_lab.workflow import WorkflowInput, WorkflowStatus, WorkflowStepRecord
 
 
@@ -46,6 +47,7 @@ def make_checkpointer() -> InMemorySaver:
         [
             CreativeIdea,
             InsightType,
+            ModelCallRecord,
             ProductFact,
             ProductProfile,
             ReferenceInsight,

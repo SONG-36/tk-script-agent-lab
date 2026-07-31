@@ -17,7 +17,7 @@ from tk_script_agent_lab.domain import (
 )
 from tk_script_agent_lab.domain.product import _require_non_empty
 
-StepExecutor = Literal["DETERMINISTIC_CODE", "FAKE_PROVIDER", "HUMAN", "IO"]
+StepExecutor = Literal["DETERMINISTIC_CODE", "FAKE_PROVIDER", "HUMAN", "IO", "MODEL"]
 StepStatus = Literal["SUCCESS", "FAILED", "WAITING", "SKIPPED"]
 
 

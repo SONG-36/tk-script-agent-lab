@@ -19,6 +19,7 @@ from tk_script_agent_lab.workflow import (
     WorkflowStatus,
     WorkflowStepRecord,
 )
+from tk_script_agent_lab.providers import ModelCallRecord
 
 
 class GraphInputState(BaseModel):
@@ -70,6 +71,7 @@ class GraphState(TypedDict, total=False):
     script_draft: ScriptDraft | None
     validation_errors: list[ValidationError]
     step_records: list[WorkflowStepRecord]
+    model_call_records: list[ModelCallRecord]
 
 
 class GraphOutputState(BaseModel):
@@ -83,3 +85,4 @@ class GraphOutputState(BaseModel):
     script_draft: ScriptDraft | None = None
     validation_errors: list[ValidationError] = Field(default_factory=list)
     step_records: list[WorkflowStepRecord] = Field(default_factory=list)
+    model_call_records: list[ModelCallRecord] = Field(default_factory=list)
